@@ -1,0 +1,12 @@
+# gradle
+gradlew.bat
+gradlew
+.gradle
+build
+
+# idea
+.idea
+*.iml
+
+# fabric
+run

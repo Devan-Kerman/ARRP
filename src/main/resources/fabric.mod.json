@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "stated",
+  "version": "${version}",
+  "name": "Stated",
+  "description": "a tech mod using only blockstates",
+  "authors": [
+    "HalfOf2"
+  ],
+  "contact": {
+    "sources": "https://github.com/Devan-Kerman/Stated"
+  },
+  "license": "CC0-1.0",
+  "icon": "assets/stated/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "net.devtech.stated.Stated"
+    ]
+  },
+  "mixins": [
+    "stated.client.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.7.8+build.187",
+    "fabric": "*",
+    "minecraft": "1.15.2"
+  }
+}
