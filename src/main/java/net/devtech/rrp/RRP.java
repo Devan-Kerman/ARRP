@@ -29,7 +29,6 @@ public class RRP implements ModInitializer {
 	@Override
 	public void onInitialize() { }
 
-
 	public void debug() {
 		Identifier item = new Identifier(MOD_ID, "test_item");
 		Identifier block = new Identifier(MOD_ID, "test_block");
