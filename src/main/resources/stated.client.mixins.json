@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "net.devtech.stated.client.mixin",
+  "package": "net.devtech.rrp.resources.mixin",
   "compatibilityLevel": "JAVA_8",
   "client": [
     "MinecraftClientMixin"

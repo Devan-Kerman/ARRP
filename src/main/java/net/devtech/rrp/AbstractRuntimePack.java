@@ -1,28 +1,43 @@
-package net.devtech.stated.client.resources;
+package net.devtech.rrp;
 
-import net.devtech.stated.Stated;
 import net.minecraft.resource.AbstractFileResourcePack;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
 import net.minecraft.util.Identifier;
+import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.text.MessageFormat;
+import java.util.*;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
 
-public class RuntimeResourcePack implements ResourcePack {
+public abstract class AbstractRuntimePack implements ResourcePack {
 	private static final Logger LOGGER = Logger.getLogger("RuntimeResourcePack");
-	private final ResourceProvider[] providers;
+	public final Map<Identifier, Supplier<byte[]>> registered = new HashMap<>();
+	public final Set<String> namespaces = new HashSet<>();
 
-	public RuntimeResourcePack(ResourceProvider... providers) {
-		this.providers = providers;
+	public void registerRawResource(Identifier identifier, Supplier<byte[]> supplier) {
+		this.registered.put(identifier, supplier);
+		this.namespaces.add(identifier.getNamespace());
 	}
+
+	public void registerTemplatedResource(Identifier path, String template, Object... args) {
+		this.registerRawStringResource(path, MessageFormat.format(template, args));
+	}
+
+	public void registerRawStringResource(Identifier identifier, String data) {
+		byte[] bytes = data.getBytes();
+		this.registerRawResource(identifier, () -> bytes);
+	}
+
+	protected static Identifier fix(Identifier identifier, String prefix, String append) {
+		return new Identifier(identifier.getNamespace(), prefix + '/' + identifier.getPath() + '.'+ append);
+	}
+
 
 	/**
 	 * pack.png and that's about it I think/hope
@@ -34,22 +49,21 @@ public class RuntimeResourcePack implements ResourcePack {
 	@Override
 	public InputStream openRoot(String fileName) throws IOException {
 		if (!fileName.contains("/") && !fileName.contains("\\")) {
-			return Stated.class.getResourceAsStream("/resource/" + fileName);
+			return RRP.class.getResourceAsStream("/resource/" + fileName);
 		} else throw new IllegalArgumentException("File name can't be a path");
 	}
 
+	/**
+	 * open a stream for the given data
+	 */
 	@Override
 	public InputStream open(ResourceType type, Identifier id) throws IOException {
-		if (type == ResourceType.CLIENT_RESOURCES) {
-			for (ResourceProvider provider : this.providers) {
-				if (provider.contains(id)) {
-					InputStream stream = provider.get(id);
-					if (stream != null) return stream;
-				}
-			}
+		Supplier<byte[]> supplier = this.registered.get(id);
+		if (supplier == null) {
 			LOGGER.warning("No resource found for " + id);
+			return null;
 		}
-		return null;
+		return new ByteArrayInputStream(supplier.get());
 	}
 
 	@Override
@@ -57,22 +71,15 @@ public class RuntimeResourcePack implements ResourcePack {
 		return Collections.emptyList();
 	}
 
+
 	@Override
 	public boolean contains(ResourceType type, Identifier id) {
-		if (type == ResourceType.CLIENT_RESOURCES) {
-			for (ResourceProvider provider : this.providers) {
-				if (provider.contains(id)) return true;
-			}
-			LOGGER.warning("No resource found for " + id);
-		}
-		return false;
+		return this.registered.containsKey(id);
 	}
 
 	@Override
 	public Set<String> getNamespaces(ResourceType type) {
-		Set<String> meta = new HashSet<>();
-		meta.add(Stated.MOD_ID);
-		return meta;
+		return this.namespaces;
 	}
 
 	@Override
@@ -109,12 +116,5 @@ public class RuntimeResourcePack implements ResourcePack {
 	}
 
 	@Override
-	public String getName() {
-		return "Half";
-	}
-
-	@Override
-	public void close() throws IOException {
-		// already handled
-	}
+	public void close() throws IOException {}
 }

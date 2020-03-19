@@ -1,21 +1,21 @@
 {
   "schemaVersion": 1,
-  "id": "stated",
+  "id": "rrp",
   "version": "${version}",
-  "name": "Stated",
-  "description": "a tech mod using only blockstates",
+  "name": "Runtime Resource Pack",
+  "description": "a mod that allows mods to generate assets on the fly",
   "authors": [
     "HalfOf2"
   ],
   "contact": {
-    "sources": "https://github.com/Devan-Kerman/Stated"
+    "sources": "https://github.com/Devan-Kerman/RRP"
   },
-  "license": "CC0-1.0",
+  "license": "LGPLv3",
   "icon": "assets/stated/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.devtech.stated.Stated"
+      "net.devtech.rrp.RRP"
     ]
   },
   "mixins": [
