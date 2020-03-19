@@ -23,7 +23,7 @@ public class MinecraftServerMixin {
 	         at = @At ("HEAD"))
 	private void registerRDP(File worldDir, LevelProperties levelProperties, CallbackInfo ci) {
 		System.out.println("!!! Registering RDP !!!");
-		//this.dataPackManager.registerProvider(new RuntimeDataPackProvider());
-		//levelProperties.getEnabledDataPacks().add("RPP_server");
+		this.dataPackManager.registerProvider(new RuntimeDataPackProvider());
+		levelProperties.getEnabledDataPacks().add("RPP_server");
 	}
 }
