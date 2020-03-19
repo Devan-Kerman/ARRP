@@ -1,7 +1,9 @@
 package net.devtech.rrp;
 
+import net.devtech.rrp.data.callbacks.RDPCallback;
 import net.devtech.rrp.resources.callbacks.RAPCallback;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.Material;
 import net.minecraft.item.BlockItem;
@@ -29,9 +31,9 @@ public class RRP implements ModInitializer {
 		Identifier item = new Identifier(MOD_ID, "test_item");
 		Identifier block = new Identifier(MOD_ID, "test_block");
 		Registry.register(ITEM, item, new Item(new Item.Settings().group(ItemGroup.MISC)));
-		Block testBlock = new Block(Block.Settings.of(Material.STONE));
-		Registry.register(Registry.ITEM, block, new BlockItem(testBlock, new Item.Settings().group(ItemGroup.MISC)));
+		Block testBlock = new Block(FabricBlockSettings.of(Material.STONE).build());
 		Registry.register(BLOCK, block, testBlock);
+		Registry.register(Registry.ITEM, block, new BlockItem(testBlock, new Item.Settings().group(ItemGroup.MISC)));
 		RAPCallback.EVENT.register(r -> {
 			r.registerDefaultItemModel(item);
 			r.registerAsyncTexture(new Identifier(MOD_ID, "item/test_item"), () -> {
@@ -57,6 +59,10 @@ public class RRP implements ModInitializer {
 				graphics2D.drawLine(0, 16, 16, 0);
 				return image;
 			});
+		});
+		RDPCallback.EVENT.register(p -> {
+			System.out.println("registered");
+			//p.registerDefaultBlockLootTable(block, item);
 		});
 	}
 }

@@ -15,13 +15,13 @@ public class RuntimeDatapackImpl extends AbstractRuntimePack implements RuntimeD
 
 	@Override
 	public void registerDefaultBlockLootTable(Identifier block, Identifier item) {
-		this.registerTemplatedResource(fix(block, "loot_tables/blocks", "json"), "{\"type\":\"minecraft:block\",\"pools\":[{\"rolls\":1,\"entries\":[{\"type\":\"minecraft:item\",\"name\":\"{0}\"}],\"conditions\":[{\"condition\":\"minecraft" +
+		this.registerTemplatedResource(fix(block, "loot_tables/blocks", "json"), "{\"type\":\"minecraft:block\",\"pools\":[{\"rolls\":1,\"entries\":[{\"type\":\"minecraft:item\",\"name\":\"%s\"}],\"conditions\":[{\"condition\":\"minecraft" +
 		                                                                          ":survives_explosion\"}]}]}", item);
 	}
 
 	@Override
 	public void registerAggregateBlockLootTable(Identifier block, Identifier piece, int max, int min) {
-		this.registerTemplatedResource(fix(block, "loot_tables/blocks", "json"), getTemplate("aggregate"), block, piece, min, max);
+		this.registerTemplatedResource(fix(block, "loot_tables/blocks", "json"), getTemplate("aggregate"), block, min, max, piece);
 	}
 
 	@Override

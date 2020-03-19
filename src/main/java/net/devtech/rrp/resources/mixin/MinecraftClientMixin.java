@@ -39,6 +39,6 @@ public class MinecraftClientMixin {
 		// todo customize service
 		RuntimeAssetPackImpl resourcePack = new RuntimeAssetPackImpl(Executors.newSingleThreadExecutor());
 		RAPCallback.EVENT.invoker().register(resourcePack);
-		list.add(resourcePack);
+		list.add(1, resourcePack);
 	}
 }

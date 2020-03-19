@@ -9,7 +9,6 @@ import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.MessageFormat;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -26,7 +25,7 @@ public abstract class AbstractRuntimePack implements ResourcePack {
 	}
 
 	public void registerTemplatedResource(Identifier path, String template, Object... args) {
-		this.registerRawStringResource(path, MessageFormat.format(template, args));
+		this.registerRawStringResource(path, String.format(template, args));
 	}
 
 	public void registerRawStringResource(Identifier identifier, String data) {
@@ -35,7 +34,7 @@ public abstract class AbstractRuntimePack implements ResourcePack {
 	}
 
 	protected static Identifier fix(Identifier identifier, String prefix, String append) {
-		return new Identifier(identifier.getNamespace(), prefix + '/' + identifier.getPath() + '.'+ append);
+		return new Identifier(identifier.getNamespace(), prefix + '/' + identifier.getPath() + '.' + append);
 	}
 
 
@@ -68,9 +67,18 @@ public abstract class AbstractRuntimePack implements ResourcePack {
 
 	@Override
 	public Collection<Identifier> findResources(ResourceType type, String namespace, String prefix, int maxDepth, Predicate<String> pathFilter) {
-		return Collections.emptyList();
+		List<Identifier> identifiers = new ArrayList<>();
+		for (Identifier identifier : this.registered.keySet()) {
+			if (identifier.getNamespace().equals(namespace)) {
+				if (identifier.getPath().startsWith(prefix)) {
+					if (pathFilter.test(identifier.getPath())) {
+						identifiers.add(identifier);
+					}
+				}
+			}
+		}
+		return identifiers;
 	}
-
 
 	@Override
 	public boolean contains(ResourceType type, Identifier id) {
