@@ -10,6 +10,7 @@ archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
 
+
 minecraft {
 }
 
@@ -70,6 +71,13 @@ publishing {
 
     // select the repositories you want to publish to
     repositories {
+        File gh = new File(projectDir.parentFile.parentFile, "util/Devan-Repo")
+        System.out.println(gh)
+        if(gh.exists()) {
+            maven {
+                url = gh.absolutePath
+            }
+        }
         // uncomment to publish to the local maven
         // mavenLocal()
     }

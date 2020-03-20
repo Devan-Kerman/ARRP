@@ -1,4 +1,4 @@
-package net.devtech.rrp.resources.builders;
+package net.devtech.rrp.util;
 
 import com.google.gson.Gson;
 import net.minecraft.util.Identifier;

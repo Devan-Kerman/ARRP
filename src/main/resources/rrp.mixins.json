@@ -1,9 +1,9 @@
 {
   "required": true,
-  "package": "net.devtech.rrp.resources.mixin",
+  "package": "net.devtech.rrp.mixin",
   "compatibilityLevel": "JAVA_8",
-  "client": [
-    "MinecraftClientMixin"
+  "mixins": [
+    "ReloadableResourceManagerImplMixin"
   ],
   "injectors": {
     "defaultRequire": 1

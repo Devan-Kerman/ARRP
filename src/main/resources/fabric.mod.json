@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "rrp",
+  "id": "runtime_resource_pack",
   "version": "${version}",
   "name": "Runtime Resource Pack",
-  "description": "a mod that allows mods to generate assets on the fly",
+  "description": "a mod that allows mods to generate assets/data on the fly",
   "authors": [
     "HalfOf2"
   ],
@@ -14,13 +14,21 @@
   "icon": "assets/stated/icon.png",
   "environment": "*",
   "entrypoints": {
+    "preLaunch": [
+      "net.devtech.rrp.RRPPre"
+    ],
     "main": [
+      "net.devtech.rrp.RRP"
+    ],
+    "RuntimeDP": [
+      "net.devtech.rrp.RRP"
+    ],
+    "RuntimeAP": [
       "net.devtech.rrp.RRP"
     ]
   },
   "mixins": [
-    "rpp.client.mixins.json",
-    "rpp.server.mixins.json"
+    "rrp.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.7.8+build.187",
