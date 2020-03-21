@@ -7,7 +7,9 @@ import java.util.logging.Logger;
 
 // todo block models
 // todo sound
-// todo relicence under lgpl
+// todo add more examples in docs
+
+// note for half
 // remember: never use resource pack providers for assets, fabric API clears and rebuilds the resource pack list
 // last time you tried this, you spent 5 hours debugging that, so don't do it again
 public class RRP implements ModInitializer {

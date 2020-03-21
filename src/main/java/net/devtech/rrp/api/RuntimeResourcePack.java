@@ -54,5 +54,5 @@ public interface RuntimeResourcePack extends ResourcePack, RuntimeDatapack, Runt
 	 * @param path the path to the texture
 	 * @param assetMaker the function to call for the asset
 	 */
-	void addAsyncAsset(Identifier path, Callable<byte[]> assetMaker);
+	void addAsyncResource(Identifier path, Callable<byte[]> assetMaker);
 }

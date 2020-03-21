@@ -72,7 +72,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack {
 	}
 
 	@Override
-	public void addAsyncAsset(Identifier path, Callable<byte[]> assetMaker) {
+	public void addAsyncResource(Identifier path, Callable<byte[]> assetMaker) {
 		Future<byte[]> array = this.service.submit(assetMaker);
 		this.addRawResource(path, () -> {
 			try {
@@ -145,7 +145,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack {
 
 	@Override
 	public void addAsyncTexture(Identifier identifier, Supplier<BufferedImage> image) {
-		this.addAsyncAsset(fix(identifier, "textures", "png"), () -> {
+		this.addAsyncResource(fix(identifier, "textures", "png"), () -> {
 			BufferedImage img = image.get();
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			ImageIO.write(img, "png", out);
