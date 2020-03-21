@@ -19,12 +19,6 @@
     ],
     "main": [
       "net.devtech.rrp.RRP"
-    ],
-    "RuntimeDP": [
-      "net.devtech.rrp.RRP"
-    ],
-    "RuntimeAP": [
-      "net.devtech.rrp.RRP"
     ]
   },
   "mixins": [

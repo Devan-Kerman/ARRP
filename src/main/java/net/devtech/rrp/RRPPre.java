@@ -4,6 +4,7 @@ import net.devtech.rrp.api.RuntimeResourcePack;
 import net.devtech.rrp.entrypoint.RRPPreGenEntrypoint;
 import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
 import net.fabricmc.loader.entrypoint.minecraft.hooks.EntrypointUtils;
+import net.minecraft.item.ItemGroup;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -15,9 +16,9 @@ public class RRPPre implements PreLaunchEntrypoint {
 
 	@Override
 	public void onPreLaunch() {
-		RuntimeResourcePack.EXECUTOR_SERVICE.submit(() -> {
+		new Thread(() -> {
 			EntrypointUtils.invoke("rrp_pre", RRPPreGenEntrypoint.class, RRPPreGenEntrypoint::register);
 			PRE_GEN_LOCK.set(false);
-		});
+		}).start();
 	}
 }

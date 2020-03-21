@@ -24,10 +24,10 @@ public class ReloadableResourceManagerImplMixin {
 	@Inject (method = "beginMonitoredReload",
 	         at = @At ("HEAD"))
 	private void registerRDP(Executor prepareExecutor, Executor applyExecutor, CompletableFuture<Unit> initialStage, List<ResourcePack> packs, CallbackInfoReturnable<ResourceReloadMonitor> cir) {
-		LOGGER.info("loading/reloading runtime data pack");
-		if (RRPPre.PRE_GEN_LOCK.get()) LOGGER.warn("Pre-Datapacks were not generated in time! Usually not a big deal, but if you have more cores you can add extra threads in the config to speed up the load process for mods that use RRP");
+		LOGGER.info("loading/reloading RRP");
+		if (RRPPre.PRE_GEN_LOCK.get()) LOGGER.warn("Pregen RRPs were not generated in time! Usually not a big deal, but if you have more cores you can add extra threads in the config to speed up the load process for mods that use RRP");
 		// @formatter:off
-		while (RRPPre.PRE_GEN_LOCK.get()); // waiting
+		while (RRPPre.PRE_GEN_LOCK.get()); // waitingoesdo
 		// @formatter:on
 		packs.add(1, RuntimeResourcePack.INSTANCE);
 	}
