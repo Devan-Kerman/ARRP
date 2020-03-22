@@ -1,5 +1,5 @@
 # RRP
-Runtime resource packs
+Runtime resource packs (for fabric)
 
 Ever thought having to make 4 jsons for a single block was outrageous? Or why every single item needed it's own json too? Or wanted to create items from templates dynamically depending on the mods loaded without having to pack tons of assets into your mod?
 
