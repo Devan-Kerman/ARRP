@@ -5,6 +5,13 @@ Ever thought having to make 4 jsons for a single block was outrageous? Or why ev
 
 Well RRP is for you then! RRP allows modders to generate assets and data on the fly, you could in theory write an entire mod with blocks and items with nothing but .java files and your mod json! You can make your own json templates so you don't have to make a json file for every single item you add, and even automate it if you're lazy like I am. No need to clutter your project with hundreds of basic json files.
 
+# FAQ
+### Is this compatible with resource packs?
+yes, RRP uses a resource pack internally, hence the name, and it's the second to last priority resource pack next to minecraft itself,
+however this means RRP cannot override mod assets, but it can override vanilla ones.
+
+### Isn't this Artifice?
+RRP is more focused on performance, making sure that if you do use RRP that you don't have to pay the cost of runtime generated resources and data. RRP isn't as advanced as Artifice yet because of it's lack of builders, however RRP will update to provide more advanced functionality in the future.
 
 ## Adding RRP
 Gradle:
