@@ -16,7 +16,7 @@ repositories {
 }
 
 dependencies {
-  modCompile group: 'net.devtech', name: 'rrp', version: '2.0.1'
+  modCompile group: 'net.devtech', name: 'rrp', version: '2.0.2'
 }
 ```
 
