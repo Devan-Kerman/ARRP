@@ -11,7 +11,7 @@ yes, RRP uses a resource pack internally, hence the name, and it's the second to
 however this means RRP cannot override mod assets, but it can override vanilla ones.
 
 ### Isn't this Artifice?
-RRP is more focused on performance, making sure that if you do use RRP that you don't have to pay the cost of runtime generated resources and data. RRP isn't as advanced as Artifice yet because of it's lack of builders, however RRP will update to provide more advanced functionality in the future.
+RRP is more focused on performance, making sure that you don't have to pay the cost of runtime generated resources and data. RRP isn't as advanced as Artifice yet because of it's lack of builders, however RRP will update to provide more advanced functionality in the future.
 
 ## Adding RRP
 Gradle:
