@@ -8,6 +8,6 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
-rootProject.name = 'rrp'
+rootProject.name = 'arrp'
 
 

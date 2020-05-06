@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "runtime_resource_pack",
+  "id": "advanced_runtime_resource_pack",
   "version": "${version}",
   "name": "Runtime Resource Pack",
   "description": "a mod that allows mods to generate assets/data on the fly",
@@ -10,7 +10,7 @@
   "contact": {
     "sources": "https://github.com/Devan-Kerman/RRP"
   },
-  "license": "LGPLv3",
+  "license": "MPLv2",
   "icon": "assets/stated/icon.png",
   "environment": "*",
   "entrypoints": {
