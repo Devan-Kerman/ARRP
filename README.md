@@ -1,5 +1,5 @@
-# RRP
-Runtime resource packs (for fabric)
+# ARRP
+Advanced Runtime resource packs (for fabric)
 
 Ever thought having to make 4 jsons for a single block was outrageous? Or why every single item needed it's own json too? Or wanted to create items from templates dynamically depending on the mods loaded without having to pack tons of assets into your mod?
 
@@ -11,9 +11,9 @@ yes, RRP uses a resource pack internally, hence the name, and it's the second to
 however this means RRP cannot override mod assets, but it can override vanilla ones.
 
 ### Isn't this Artifice?
-RRP is more focused on performance, making sure that you don't have to pay the cost of runtime generated resources and data. RRP isn't as advanced as Artifice yet because of it's lack of builders, however RRP will update to provide more advanced functionality in the future.
+RRP is more focused on performance, making sure that you don't have to pay the cost of runtime generated resources and data.
 
-## Adding RRP
+## Adding ARRP
 Gradle:
 ```groovy
 repositories {
@@ -23,12 +23,12 @@ repositories {
 }
 
 dependencies {
-  modCompile group: 'net.devtech', name: 'rrp', version: '2.0.2'
+  modCompile group: 'net.devtech', name: 'arrp', version: '0.0.1'
 }
 ```
 
-## Using RRP
-https://github.com/Devan-Kerman/RRP/wiki
+## Using ARRP
+https://github.com/Devan-Kerman/ARRP/wiki
 
 Everything in this repository is licenced under the LGPLv3 Licence [https://github.com/Devan-Kerman/Stated/blob/master/LICENCE.txt]
 
