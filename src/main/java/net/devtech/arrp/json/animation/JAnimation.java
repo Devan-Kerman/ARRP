@@ -9,7 +9,6 @@ public class JAnimation {
 	private Integer width;
 	private Integer height;
 	private Integer frametime;
-	// todo serializer
 	private List<JFrame> frames;
 	private List<Integer> defaultFrames;
 

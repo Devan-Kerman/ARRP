@@ -1,7 +1,5 @@
 package net.devtech.arrp.json.models;
 
-// todo check floats
-// check ctors
 public class JElement {
 	private final float[] from = new float[3];
 	private final float[] to = new float[3];

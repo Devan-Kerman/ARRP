@@ -64,12 +64,12 @@ public interface RuntimeResourcePack extends ResourcePack {
 	 *
 	 * @see #async(Consumer)
 	 */
-	Future<byte[]> addAsyncResource(ResourceType type, Identifier identifier, CallableFunction<Identifier, byte[]> data); // todo add consumer of id
+	Future<byte[]> addAsyncResource(ResourceType type, Identifier identifier, CallableFunction<Identifier, byte[]> data);
 
 	/**
 	 * add a resource that is lazily evaluated
 	 */
-	void addLazyResource(ResourceType type, Identifier path, BiFunction<RuntimeResourcePack, Identifier, byte[]> data); // todo change to biconsumer
+	void addLazyResource(ResourceType type, Identifier path, BiFunction<RuntimeResourcePack, Identifier, byte[]> data);
 
 	/**
 	 * add a raw resource
