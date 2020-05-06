@@ -1,62 +1,34 @@
 package test;
 
-import net.devtech.rrp.RRP;
-import net.devtech.rrp.api.RuntimeResourcePack;
-import net.devtech.rrp.entrypoint.RRPPreGenEntrypoint;
-import net.devtech.rrp.util.recipies.RecipeChoice;
-import net.minecraft.util.Identifier;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.util.HashMap;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import net.devtech.arrp.json.blockstate.JMultipart;
+import net.devtech.arrp.json.blockstate.JState;
+import net.devtech.arrp.json.blockstate.JVariant;
+import net.devtech.arrp.json.blockstate.JWhen;
+import net.devtech.arrp.json.models.JModel;
+import net.devtech.arrp.json.models.JTextures;
+import net.minecraft.util.math.Direction;
 
-public class RRPPreTest implements RRPPreGenEntrypoint {
-	private static final String MOD_ID = RRP.MOD_ID;
-	public static final Identifier TEST_ITEM = new Identifier(MOD_ID, "test_item");
-	public static final Identifier TEST_BLOCK = new Identifier(MOD_ID, "test_block");
+import static net.devtech.arrp.json.blockstate.JState.*;
+import static net.devtech.arrp.json.models.JModel.model;
+import static net.devtech.arrp.json.models.JModel.*;
 
-	@Override
-	public void register() {
-	}
+public class RRPPreTest {
+	public static void main(String[] args) {
+		JState iron_block = state(variant(JState.model("block/iron_block")));
+		JState oak_fence = state(multipart(JState.model("block/oak_fence_post")), multipart(JState.model("block/oak_fence_side").uvlock()).when(when().add("north", "true")),
+		                         multipart(JState.model("block/oak_fence_side").setY(90).uvlock()).when(when().add("east", "true")), multipart(JState.model("block/oak_fence_side").setY(180).uvlock()).when(when().add("south", "true")),
+		                         multipart(JState.model("block/oak_fence_side").setY(270).uvlock()).when(when().add("west", "true")));
 
-	private void addRDP() {
-		RuntimeResourcePack.INSTANCE.addAggregateBlockLootTable(TEST_BLOCK, TEST_ITEM, 3, 1);
-	}
+		JModel model =
+		model().textures(textures().var("all", "block/bamboo_stalk").particle("block/bamboo_stalk")).element(element().from(7, 0, 7).to(9, 16, 9).faces(faces().down(face("all").cullface(Direction.DOWN).uv(13, 4, 15, 6)).up(face("all").cullface(Direction.UP).uv(13, 0, 15, 2)).north(face("all").uv(9, 0, 11, 16)).south(face("all").uv(9, 0, 11, 16)).west(face("all").uv(9, 0, 11, 16)).east(face("all").uv(9, 0, 11, 16))));
 
-	private void addRAP() {
-		RuntimeResourcePack.INSTANCE.addDefaultItemModel(TEST_ITEM);
-		RuntimeResourcePack.INSTANCE.addAsyncTexture(new Identifier(MOD_ID, "item/test_item"), () -> {
-			BufferedImage image = new BufferedImage(16, 16, BufferedImage.TYPE_INT_RGB);
-			Graphics2D graphics2D = image.createGraphics();
-			graphics2D.setColor(new Color(0x80ffffff, true));
-			graphics2D.drawLine(0, 0, 16, 16);
-			graphics2D.setColor(Color.RED);
-			graphics2D.drawLine(0, 16, 16, 0);
-			return image;
-		});
-
-		RuntimeResourcePack.INSTANCE.addDefaultBlockItemModel(TEST_BLOCK);
-		RuntimeResourcePack.INSTANCE.addCubeAllBlockModel(TEST_BLOCK);
-		RuntimeResourcePack.INSTANCE.addDefaultBlockState(TEST_BLOCK);
-		RuntimeResourcePack.INSTANCE.addAsyncTexture(new Identifier(MOD_ID, "block/test_block"), () -> {
-			BufferedImage image = new BufferedImage(16, 16, BufferedImage.TYPE_INT_RGB);
-			Graphics2D graphics2D = image.createGraphics();
-			graphics2D.setColor(Color.WHITE);
-			graphics2D.fillRect(0, 0, 16, 16);
-			graphics2D.setColor(Color.BLUE);
-			graphics2D.drawLine(0, 0, 16, 16);
-			graphics2D.setColor(Color.RED);
-			graphics2D.drawLine(0, 16, 16, 0);
-			return image;
-		});
-
-		HashMap<String, String> map = new HashMap<>();
-		map.put("item."+MOD_ID+".test_item", "Test Item");
-		map.put("block."+MOD_ID+".test_block", "Test Block");
-		RuntimeResourcePack.INSTANCE.addLangFile(MOD_ID, "en_us", map);
-
-		RecipeChoice recipeChoice = new RecipeChoice.Item(TEST_ITEM);
-		RuntimeResourcePack.INSTANCE.addShapelessRecipe(new Identifier(MOD_ID, "recipe"), TEST_BLOCK, 1, recipeChoice, recipeChoice, recipeChoice, recipeChoice);
-		RuntimeResourcePack.INSTANCE.addShaped4x4CraftingRecipe(new Identifier(MOD_ID, "recipe0"), TEST_BLOCK, 1, recipeChoice, null, recipeChoice, null);
+		Gson gson =
+		new GsonBuilder().registerTypeAdapter(JMultipart.class, new JMultipart.Serializer()).registerTypeAdapter(JWhen.class, new JWhen.Serializer()).registerTypeAdapter(JState.class, new JState.Serializer()).registerTypeAdapter(JVariant.class,
+		                                                                                                                                                                                                                             new JVariant.Serializer()).registerTypeAdapter(JTextures.class, new JTextures.Serializer()).setPrettyPrinting().create();
+		//System.out.println(gson.toJson(iron_block));
+		//System.out.println(gson.toJson(oak_fence));
+		System.out.println(gson.toJson(model));
 	}
 }

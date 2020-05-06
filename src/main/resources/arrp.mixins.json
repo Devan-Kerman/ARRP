@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "net.devtech.arrp.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "ReloadableResourceManagerImplMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

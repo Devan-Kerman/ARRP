@@ -14,15 +14,12 @@
   "icon": "assets/stated/icon.png",
   "environment": "*",
   "entrypoints": {
-    "preLaunch": [
-      "net.devtech.rrp.RRPPre"
-    ],
     "main": [
-      "net.devtech.rrp.RRP"
+      "net.devtech.arrp.ARRP"
     ]
   },
   "mixins": [
-    "rrp.mixins.json"
+    "arrp.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.7.8+build.187",
