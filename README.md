@@ -30,5 +30,5 @@ dependencies {
 ## Using ARRP
 https://github.com/Devan-Kerman/ARRP/wiki
 
-Everything in this repository is licenced under the LGPLv3 Licence [https://github.com/Devan-Kerman/Stated/blob/master/LICENCE.txt]
+(This repository is licenced under the LGPLv3 Licence)[https://github.com/Devan-Kerman/ARRP/blob/master/LICENCE.txt]
 
