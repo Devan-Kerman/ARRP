@@ -14,7 +14,7 @@
   "icon": "assets/stated/icon.png",
   "environment": "*",
   "entrypoints": {
-    "main": [
+    "preLaunch": [
       "net.devtech.arrp.ARRP"
     ]
   },

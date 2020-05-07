@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * a block/item model, static import this class
+ */
 public class JModel {
-
 	private String parent;
 	// true is default
 	private Boolean ambientocclusion;

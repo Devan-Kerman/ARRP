@@ -51,31 +51,6 @@ public class JTextures {
 		return this;
 	}
 
-	public JTextures layer5(String val) {
-		this.textures.put("layer5", val);
-		return this;
-	}
-
-	public JTextures layer6(String val) {
-		this.textures.put("layer6", val);
-		return this;
-	}
-
-	public JTextures layer7(String val) {
-		this.textures.put("layer7", val);
-		return this;
-	}
-
-	public JTextures layer8(String val) {
-		this.textures.put("layer8", val);
-		return this;
-	}
-
-	public JTextures layer9(String val) {
-		this.textures.put("layer9", val);
-		return this;
-	}
-
 	public static class Serializer implements JsonSerializer<JTextures> {
 		@Override
 		public JsonElement serialize(JTextures src, Type typeOfSrc, JsonSerializationContext context) {

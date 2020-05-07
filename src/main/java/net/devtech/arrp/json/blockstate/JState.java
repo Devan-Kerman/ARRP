@@ -12,7 +12,8 @@ public final class JState {
 	private final List<JVariant> variants = new ArrayList<>();
 	private final List<JMultipart> multiparts = new ArrayList<>();
 
-	protected JState() {}
+	protected JState() {
+	}
 
 	public static JState state() {
 		return new JState();

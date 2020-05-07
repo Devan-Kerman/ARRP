@@ -13,12 +13,12 @@ public class JBlockModel {
 		this.model = model;
 	}
 
-	public JBlockModel setX(int x) {
+	public JBlockModel x(int x) {
 		this.x = x;
 		return this;
 	}
 
-	public JBlockModel setY(int y) {
+	public JBlockModel y(int y) {
 		this.y = y;
 		return this;
 	}
@@ -27,4 +27,14 @@ public class JBlockModel {
 		this.uvlock = true;
 		return this;
 	}
+
+	@Override
+	public JBlockModel clone() {
+		try {
+			return (JBlockModel) super.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new InternalError(e);
+		}
+	}
+
 }
