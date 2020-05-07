@@ -56,15 +56,16 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
 	// @formatter:off
 	private static final Gson GSON = new GsonBuilder()
-		.registerTypeAdapter(JMultipart.class, new JMultipart.Serializer())
-		.registerTypeAdapter(JWhen.class, new JWhen.Serializer())
-		.registerTypeAdapter(JState.class, new JState.Serializer())
-		.registerTypeAdapter(JVariant.class, new JVariant.Serializer())
-		.registerTypeAdapter(JTextures.class, new JTextures.Serializer())
-		.registerTypeAdapter(JAnimation.class, new JAnimation.Serializer())
-		.registerTypeAdapter(JFunction.class, new JFunction.Serializer())
-		.registerTypeAdapter(JPool.class, new JPool.Serializer())
-		.create();
+									 .disableHtmlEscaping()
+									 .registerTypeAdapter(JMultipart.class, new JMultipart.Serializer())
+									 .registerTypeAdapter(JWhen.class, new JWhen.Serializer())
+									 .registerTypeAdapter(JState.class, new JState.Serializer())
+									 .registerTypeAdapter(JVariant.class, new JVariant.Serializer())
+									 .registerTypeAdapter(JTextures.class, new JTextures.Serializer())
+									 .registerTypeAdapter(JAnimation.class, new JAnimation.Serializer())
+									 .registerTypeAdapter(JFunction.class, new JFunction.Serializer())
+									 .registerTypeAdapter(JPool.class, new JPool.Serializer())
+									 .create();
 	// @formatter:on
 	private static final Logger LOGGER = Logger.getLogger("RRP");
 
@@ -241,7 +242,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 		while (!this.inData.isEmpty()) { }
 		while (!this.inAssets.isEmpty()) { }
 		// data dump time
-		File folder = new File("rrp.debug/" + this.id.toString().replace(':', File.pathSeparatorChar) + "/");
+		File folder = new File("rrp.debug/" + this.id.toString().replace(':', ';') + "/");
 		File assets = new File(folder, "assets");
 		assets.mkdirs();
 		for (Map.Entry<Identifier, Supplier<byte[]>> entry : this.assets.entrySet()) {

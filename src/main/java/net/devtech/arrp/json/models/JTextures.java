@@ -51,6 +51,15 @@ public class JTextures {
 		return this;
 	}
 
+	@Override
+	public JTextures clone() {
+		try {
+			return (JTextures) super.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new InternalError(e);
+		}
+	}
+
 	public static class Serializer implements JsonSerializer<JTextures> {
 		@Override
 		public JsonElement serialize(JTextures src, Type typeOfSrc, JsonSerializationContext context) {

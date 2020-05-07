@@ -10,7 +10,7 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class JVariant {
+public final class JVariant implements Cloneable {
 	private final Map<String, JBlockModel> models = new HashMap<>();
 
 	/**
@@ -63,6 +63,15 @@ public final class JVariant {
 			JsonObject object = new JsonObject();
 			src.models.forEach((s, m) -> object.add(s, context.serialize(m)));
 			return object;
+		}
+	}
+
+	@Override
+	public JVariant clone() {
+		try {
+			return (JVariant) super.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new InternalError(e);
 		}
 	}
 }

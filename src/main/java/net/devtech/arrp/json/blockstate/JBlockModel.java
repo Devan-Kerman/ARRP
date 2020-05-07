@@ -1,6 +1,6 @@
 package net.devtech.arrp.json.blockstate;
 
-public class JBlockModel {
+public class JBlockModel implements Cloneable {
 	private final String model;
 	private Integer x;
 	private Integer y;
@@ -11,6 +11,15 @@ public class JBlockModel {
 	 */
 	JBlockModel(String model) {
 		this.model = model;
+	}
+
+	@Override
+	public JBlockModel clone() {
+		try {
+			return (JBlockModel) super.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new InternalError(e);
+		}
 	}
 
 	public JBlockModel x(int x) {
@@ -26,15 +35,6 @@ public class JBlockModel {
 	public JBlockModel uvlock() {
 		this.uvlock = true;
 		return this;
-	}
-
-	@Override
-	public JBlockModel clone() {
-		try {
-			return (JBlockModel) super.clone();
-		} catch (CloneNotSupportedException e) {
-			throw new InternalError(e);
-		}
 	}
 
 }

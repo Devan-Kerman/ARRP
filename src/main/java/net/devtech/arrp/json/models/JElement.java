@@ -1,6 +1,6 @@
 package net.devtech.arrp.json.models;
 
-public class JElement {
+public class JElement implements Cloneable {
 	private final float[] from = new float[3];
 	private final float[] to = new float[3];
 	private JRotation rotation;
@@ -39,5 +39,14 @@ public class JElement {
 	public JElement faces(JFaces faces) {
 		this.faces = faces;
 		return this;
+	}
+
+	@Override
+	public JElement clone() {
+		try {
+			return (JElement) super.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new InternalError(e);
+		}
 	}
 }

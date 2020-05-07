@@ -31,4 +31,13 @@ public class JRotation {
 		this.rescale = true;
 		return this;
 	}
+
+	@Override
+	public JRotation clone() {
+		try {
+			return (JRotation) super.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new InternalError(e);
+		}
+	}
 }

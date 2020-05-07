@@ -1,6 +1,6 @@
 package net.devtech.arrp.json.models;
 
-public class JDisplay {
+public class JDisplay implements Cloneable {
 	private JPosition thirdperson_righthand;
 	private JPosition thirdperson_lefthand;
 	private JPosition firstperson_righthand;
@@ -53,5 +53,14 @@ public class JDisplay {
 	public JDisplay setFixed(JPosition fixed) {
 		this.fixed = fixed;
 		return this;
+	}
+
+	@Override
+	public JDisplay clone() {
+		try {
+			return (JDisplay) super.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new InternalError(e);
+		}
 	}
 }

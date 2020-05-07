@@ -8,7 +8,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JMultipart {
+public class JMultipart implements Cloneable {
 	// one or list
 	private final List<JBlockModel> apply = new ArrayList<>();
 	private JWhen when;
@@ -17,6 +17,15 @@ public class JMultipart {
 	 * @see JState#multipart(JBlockModel...)
 	 */
 	JMultipart() {}
+
+	@Override
+	public JMultipart clone() {
+		try {
+			return (JMultipart) super.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new InternalError(e);
+		}
+	}
 
 	public JMultipart when(JWhen when) {
 		this.when = when;

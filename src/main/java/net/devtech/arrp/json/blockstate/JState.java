@@ -73,6 +73,15 @@ public final class JState {
 		return new JWhen();
 	}
 
+	@Override
+	public JState clone() {
+		try {
+			return (JState) super.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new InternalError(e);
+		}
+	}
+
 	public static class Serializer implements JsonSerializer<JState> {
 		@Override
 		public JsonElement serialize(JState src, Type typeOfSrc, JsonSerializationContext context) {

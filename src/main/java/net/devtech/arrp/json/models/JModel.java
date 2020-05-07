@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * a block/item model, static import this class
  */
-public class JModel {
+public class JModel implements Cloneable {
 	private String parent;
 	// true is default
 	private Boolean ambientocclusion;
@@ -82,5 +82,14 @@ public class JModel {
 	public JModel element(JElement... elements) {
 		this.elements.addAll(Arrays.asList(elements));
 		return this;
+	}
+
+	@Override
+	public JModel clone() {
+		try {
+			return (JModel) super.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new InternalError(e);
+		}
 	}
 }

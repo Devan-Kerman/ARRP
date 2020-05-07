@@ -3,7 +3,7 @@ package net.devtech.arrp.json.loot;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JLootTable {
+public class JLootTable implements Cloneable {
 	private final String type;
 	private List<JPool> pools;
 
@@ -37,5 +37,14 @@ public class JLootTable {
 		if (this.pools == null) this.pools = new ArrayList<>(1);
 		this.pools.add(pool);
 		return this;
+	}
+
+	@Override
+	public JLootTable clone() {
+		try {
+			return (JLootTable) super.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new InternalError(e);
+		}
 	}
 }

@@ -2,7 +2,7 @@ package net.devtech.arrp.json.models;
 
 import net.minecraft.util.math.Direction;
 
-public class JFace {
+public class JFace implements Cloneable {
 	private final float[] uv = new float[4];
 	private final String texture;
 	private String cullface;
@@ -47,5 +47,14 @@ public class JFace {
 	public JFace tintIndex(int index) {
 		this.tintIndex = index;
 		return this;
+	}
+
+	@Override
+	public JFace clone() {
+		try {
+			return (JFace) super.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new InternalError(e);
+		}
 	}
 }

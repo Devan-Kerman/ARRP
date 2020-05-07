@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class JFunction {
+public class JFunction implements Cloneable {
 	private final List<JCondition> conditions = new ArrayList<>();
 	private Map<String, Object> properties = new HashMap<>();
 
@@ -30,6 +30,15 @@ public class JFunction {
 			JsonObject element = context.serialize(src.properties).getAsJsonObject();
 			if (!src.conditions.isEmpty()) element.add("conditions", context.serialize(src.conditions));
 			return element;
+		}
+	}
+
+	@Override
+	public JFunction clone() {
+		try {
+			return (JFunction) super.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new InternalError(e);
 		}
 	}
 }

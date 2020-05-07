@@ -8,7 +8,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JPool {
+public class JPool implements Cloneable {
 	private List<JCondition> conditions;
 	private List<JFunction> functions;
 	private List<JEntry> entries;
@@ -69,6 +69,15 @@ public class JPool {
 			if (src.bonus_roll != null) obj.add("bonus_rolls", context.serialize(src.bonus_roll));
 			if (src.bonus_rolls != null) obj.addProperty("bonus_rolls", src.bonus_rolls);
 			return obj;
+		}
+	}
+
+	@Override
+	public JPool clone() {
+		try {
+			return (JPool) super.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new InternalError(e);
 		}
 	}
 }

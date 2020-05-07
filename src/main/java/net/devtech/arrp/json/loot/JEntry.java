@@ -3,7 +3,7 @@ package net.devtech.arrp.json.loot;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JEntry {
+public class JEntry implements Cloneable {
 	private String type;
 	private String name;
 	private List<String> children;
@@ -49,5 +49,14 @@ public class JEntry {
 	public JEntry quality(Integer quality) {
 		this.quality = quality;
 		return this;
+	}
+
+	@Override
+	public JEntry clone() {
+		try {
+			return (JEntry) super.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new InternalError(e);
+		}
 	}
 }

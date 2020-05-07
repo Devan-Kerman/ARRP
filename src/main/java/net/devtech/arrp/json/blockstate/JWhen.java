@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class JWhen {
+public class JWhen implements Cloneable {
 	private final List<Pair<String, String[]>> OR = new ArrayList<>();
 
 	JWhen() {}
@@ -34,6 +34,15 @@ public class JWhen {
 				}
 				return array;
 			}
+		}
+	}
+
+	@Override
+	public JWhen clone() {
+		try {
+			return (JWhen) super.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new InternalError(e);
 		}
 	}
 }

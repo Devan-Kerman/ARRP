@@ -4,7 +4,7 @@ import com.google.gson.*;
 import java.lang.reflect.Type;
 import java.util.List;
 
-public class JAnimation {
+public class JAnimation implements Cloneable {
 	private Boolean interpolate;
 	private Integer width;
 	private Integer height;
@@ -12,6 +12,14 @@ public class JAnimation {
 	private List<JFrame> frames;
 	private List<Integer> defaultFrames;
 
+	@Override
+	public JAnimation clone() {
+		try {
+			return (JAnimation) super.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new InternalError(e);
+		}
+	}
 
 	public static JAnimation animation() {
 		return new JAnimation();

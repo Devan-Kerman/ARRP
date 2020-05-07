@@ -41,4 +41,13 @@ public class JTag {
 		this.values.add('#' + tag.getNamespace() + ':' + tag.getPath());
 		return this;
 	}
+
+	@Override
+	public JTag clone() {
+		try {
+			return (JTag) super.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new InternalError(e);
+		}
+	}
 }

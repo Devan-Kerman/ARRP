@@ -1,7 +1,7 @@
 package net.devtech.arrp.json.models;
 
 @SuppressWarnings ("MismatchedReadAndWriteOfArray")
-public class JPosition {
+public class JPosition implements Cloneable {
 	private float[] rotation = new float[3];
 	private float[] translation = new float[3];
 	private float[] scale = new float[3];
@@ -30,5 +30,14 @@ public class JPosition {
 		this.scale[1] = y;
 		this.scale[2] = z;
 		return this;
+	}
+
+	@Override
+	public JPosition clone() {
+		try {
+			return (JPosition) super.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new InternalError(e);
+		}
 	}
 }

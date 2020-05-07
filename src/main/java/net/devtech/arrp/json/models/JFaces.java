@@ -1,6 +1,6 @@
 package net.devtech.arrp.json.models;
 
-public class JFaces {
+public class JFaces implements Cloneable {
 	private JFace up;
 	private JFace down;
 	private JFace north;
@@ -41,5 +41,14 @@ public class JFaces {
 	public JFaces west(JFace face) {
 		this.west = face;
 		return this;
+	}
+
+	@Override
+	public JFaces clone() {
+		try {
+			return (JFaces) super.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new InternalError(e);
+		}
 	}
 }

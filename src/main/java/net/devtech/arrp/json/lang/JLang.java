@@ -4,7 +4,7 @@ import net.minecraft.util.Identifier;
 import java.util.HashMap;
 import java.util.Map;
 
-public class JLang {
+public class JLang implements Cloneable {
 	private Map<String, String> lang = new HashMap<>();
 
 	JLang() {}
@@ -61,5 +61,14 @@ public class JLang {
 
 	public JLang biome(Identifier id, String name) {
 		return this.object("biome", id, name);
+	}
+
+	@Override
+	public JLang clone() {
+		try {
+			return (JLang) super.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new InternalError(e);
+		}
 	}
 }
