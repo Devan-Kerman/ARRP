@@ -7,8 +7,6 @@ public class JLootTable implements Cloneable {
 	private final String type;
 	private List<JPool> pools;
 
-	JLootTable(String type) {this.type = type;}
-
 	public static JLootTable loot(String type) {
 		return new JLootTable(type);
 	}
@@ -32,6 +30,11 @@ public class JLootTable implements Cloneable {
 	public static JRoll roll(int min, int max) {
 		return new JRoll(min, max);
 	}
+
+	/**
+	 * @see JLootTable#loot(String)
+	 */
+	public JLootTable(String type) {this.type = type;}
 
 	public JLootTable pool(JPool pool) {
 		if (this.pools == null) this.pools = new ArrayList<>(1);

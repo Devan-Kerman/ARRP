@@ -9,12 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class JState {
-	private final List<JVariant> variants = new ArrayList<>();
-	private final List<JMultipart> multiparts = new ArrayList<>();
-
-	protected JState() {
-	}
-
 	public static JState state() {
 		return new JState();
 	}
@@ -27,24 +21,12 @@ public final class JState {
 		return state;
 	}
 
-	public JState add(JVariant variant) {
-		if (!this.multiparts.isEmpty()) throw new IllegalStateException("BlockStates can only have variants *or* multiparts, not both");
-		this.variants.add(variant);
-		return this;
-	}
-
 	public static JState state(JMultipart... parts) {
 		JState state = new JState();
 		for (JMultipart part : parts) {
 			state.add(part);
 		}
 		return state;
-	}
-
-	public JState add(JMultipart multiparts) {
-		if (!this.variants.isEmpty()) throw new IllegalStateException("BlockStates can only have variants *or* multiparts, not both");
-		this.multiparts.add(multiparts);
-		return this;
 	}
 
 	public static JVariant variant() {
@@ -71,6 +53,30 @@ public final class JState {
 
 	public static JWhen when() {
 		return new JWhen();
+	}
+
+
+	private final List<JVariant> variants = new ArrayList<>();
+	private final List<JMultipart> multiparts = new ArrayList<>();
+
+	/**
+	 * @see #state()
+	 * @see #state(JMultipart...)
+	 * @see #state(JVariant...)
+	 */
+	public JState() {
+	}
+
+	public JState add(JVariant variant) {
+		if (!this.multiparts.isEmpty()) throw new IllegalStateException("BlockStates can only have variants *or* multiparts, not both");
+		this.variants.add(variant);
+		return this;
+	}
+
+	public JState add(JMultipart multiparts) {
+		if (!this.variants.isEmpty()) throw new IllegalStateException("BlockStates can only have variants *or* multiparts, not both");
+		this.multiparts.add(multiparts);
+		return this;
 	}
 
 	@Override

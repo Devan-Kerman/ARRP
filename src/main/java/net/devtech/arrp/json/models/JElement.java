@@ -10,7 +10,7 @@ public class JElement implements Cloneable {
 	/**
 	 * @see JModel#element()
 	 */
-	JElement() {}
+	public JElement() {}
 
 	public JElement from(float x, float y, float z) {
 		this.from[0] = x;

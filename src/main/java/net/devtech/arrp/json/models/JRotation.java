@@ -11,7 +11,7 @@ public class JRotation {
 	/**
 	 * @see JModel#rotation(Direction.Axis)
 	 */
-	JRotation(Direction.Axis axis) {
+	public JRotation(Direction.Axis axis) {
 		this.axis = axis.asString().charAt(0);
 	}
 

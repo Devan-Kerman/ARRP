@@ -8,28 +8,32 @@ public class JTag {
 	private Boolean replace;
 	private List<String> values = new ArrayList<>();
 
-	JTag() {}
-
 	public static JTag replacingTag() {
 		return tag().replace();
 	}
 
 	/**
-	 * whether or not this tag should override all super tags
+	 * @see #tag()
+	 * @see #tag(Identifier)
 	 */
-	JTag replace() {
-		this.replace = true;
-		return this;
-	}
+	public JTag() {}
 
 	public static JTag tag() {
 		return new JTag();
 	}
 
 	/**
+	 * whether or not this tag should override all super tags
+	 */
+	public JTag replace() {
+		this.replace = true;
+		return this;
+	}
+
+	/**
 	 * add a normal item to the tag
 	 */
-	JTag add(Identifier identifier) {
+	public JTag add(Identifier identifier) {
 		this.values.add(identifier.toString());
 		return this;
 	}
@@ -37,7 +41,7 @@ public class JTag {
 	/**
 	 * add a tag to the tag
 	 */
-	JTag tag(Identifier tag) {
+	public JTag tag(Identifier tag) {
 		this.values.add('#' + tag.getNamespace() + ':' + tag.getPath());
 		return this;
 	}

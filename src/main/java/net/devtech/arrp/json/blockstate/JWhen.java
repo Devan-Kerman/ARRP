@@ -10,7 +10,10 @@ import java.util.List;
 public class JWhen implements Cloneable {
 	private final List<Pair<String, String[]>> OR = new ArrayList<>();
 
-	JWhen() {}
+	/**
+	 * @see JState#when()
+	 */
+	public JWhen() {}
 
 	public JWhen add(String condition, String... states) {
 		this.OR.add(new Pair<>(condition, states));

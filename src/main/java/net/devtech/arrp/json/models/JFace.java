@@ -12,7 +12,7 @@ public class JFace implements Cloneable {
 	/**
 	 * @see JModel#face(String)
 	 */
-	JFace(String texture) {
+	public JFace(String texture) {
 		this.texture = '#' + texture;
 	}
 

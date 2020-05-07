@@ -12,7 +12,10 @@ public class JEntry implements Cloneable {
 	private Integer weight;
 	private Integer quality;
 
-	JEntry() {}
+	/**
+	 * @see JLootTable#entry()
+	 */
+	public JEntry() {}
 
 	public JEntry type(String type) {
 		this.type = type;

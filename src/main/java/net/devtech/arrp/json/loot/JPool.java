@@ -17,7 +17,10 @@ public class JPool implements Cloneable {
 	private Integer bonus_rolls;
 	private JRoll bonus_roll;
 
-	JPool() {}
+	/**
+	 * @see JLootTable#pool()
+	 */
+	public JPool() {}
 
 	public JPool entry(JEntry entry) {
 		if (this.entries == null) this.entries = new ArrayList<>(1);

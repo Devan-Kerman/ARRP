@@ -2,8 +2,13 @@ package net.devtech.arrp.json.animation;
 
 import com.google.gson.*;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @see #animation()
+ * @see #frame(int)
+ */
 public class JAnimation implements Cloneable {
 	private Boolean interpolate;
 	private Integer width;
@@ -12,6 +17,14 @@ public class JAnimation implements Cloneable {
 	private List<JFrame> frames;
 	private List<Integer> defaultFrames;
 
+	public static JAnimation animation() {
+		return new JAnimation();
+	}
+
+	public static JFrame frame(int index) {
+		return new JFrame(index);
+	}
+
 	@Override
 	public JAnimation clone() {
 		try {
@@ -19,14 +32,6 @@ public class JAnimation implements Cloneable {
 		} catch (CloneNotSupportedException e) {
 			throw new InternalError(e);
 		}
-	}
-
-	public static JAnimation animation() {
-		return new JAnimation();
-	}
-
-	public static JFrame frame(int index) {
-		return new JFrame(index);
 	}
 
 	public JAnimation interpolate() {
@@ -50,11 +55,13 @@ public class JAnimation implements Cloneable {
 	}
 
 	public JAnimation add(int frame) {
+		if (this.defaultFrames == null) this.defaultFrames = new ArrayList<>();
 		this.defaultFrames.add(frame);
 		return this;
 	}
 
 	public JAnimation add(JFrame frame) {
+		if (this.frames == null) this.frames = new ArrayList<>();
 		this.frames.add(frame);
 		return this;
 	}

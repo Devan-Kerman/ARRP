@@ -7,11 +7,14 @@ import java.util.Map;
 public class JLang implements Cloneable {
 	private Map<String, String> lang = new HashMap<>();
 
-	JLang() {}
-
 	public static JLang lang() {
 		return new JLang();
 	}
+
+	/**
+	 * @see #lang()
+	 */
+	public JLang() {}
 
 	public JLang translate(String in, String out) {
 		this.lang.put(in, out);

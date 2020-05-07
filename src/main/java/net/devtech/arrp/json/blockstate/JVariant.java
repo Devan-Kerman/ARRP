@@ -16,7 +16,7 @@ public final class JVariant implements Cloneable {
 	/**
 	 * @see JState#variant()
 	 */
-	JVariant() {}
+	public JVariant() {}
 
 	public JVariant put(String key, JBlockModel model) {
 		this.models.put(key, model);

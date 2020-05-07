@@ -9,7 +9,7 @@ public class JBlockModel implements Cloneable {
 	/**
 	 * @see JState#model(String)
 	 */
-	JBlockModel(String model) {
+	public JBlockModel(String model) {
 		this.model = model;
 	}
 

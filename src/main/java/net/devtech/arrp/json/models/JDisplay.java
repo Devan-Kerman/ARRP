@@ -13,7 +13,7 @@ public class JDisplay implements Cloneable {
 	/**
 	 * @see JModel#display()
 	 */
-	JDisplay() {}
+	public JDisplay() {}
 
 	public JDisplay setThirdperson_righthand(JPosition thirdperson_righthand) {
 		this.thirdperson_righthand = thirdperson_righthand;

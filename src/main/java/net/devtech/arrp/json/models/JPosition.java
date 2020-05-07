@@ -9,7 +9,7 @@ public class JPosition implements Cloneable {
 	/**
 	 * @see JModel#position()
 	 */
-	JPosition() {}
+	public JPosition() {}
 
 	public JPosition rotation(float x, float y, float z) {
 		this.rotation[0] = x;

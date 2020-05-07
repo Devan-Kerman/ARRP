@@ -11,7 +11,7 @@ public class JFaces implements Cloneable {
 	/**
 	 * @see JModel#faces()
 	 */
-	JFaces() {}
+	public JFaces() {}
 
 	public JFaces up(JFace face) {
 		this.up = face;

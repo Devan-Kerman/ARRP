@@ -14,7 +14,7 @@ public class JTextures {
 	/**
 	 * @see JModel#textures()
 	 */
-	JTextures() {}
+	public JTextures() {}
 
 	public JTextures var(String name, String val) {
 		this.textures.put(name, val);

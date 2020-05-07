@@ -19,8 +19,6 @@ public class JModel implements Cloneable {
 	// make serializer
 	private List<JElement> elements = new ArrayList<>();
 
-	JModel() {}
-
 	public static JModel model() {
 		return new JModel();
 	}
@@ -58,6 +56,12 @@ public class JModel implements Cloneable {
 	public static JTextures textures() {
 		return new JTextures();
 	}
+
+	/**
+	 * @see #model(String)
+	 * @see #model()
+	 */
+	public JModel() {}
 
 	public JModel parent(String parent) {
 		this.parent = parent;

@@ -16,7 +16,7 @@ public class JMultipart implements Cloneable {
 	/**
 	 * @see JState#multipart(JBlockModel...)
 	 */
-	JMultipart() {}
+	public JMultipart() {}
 
 	@Override
 	public JMultipart clone() {

@@ -14,7 +14,10 @@ public class JFunction implements Cloneable {
 	private final List<JCondition> conditions = new ArrayList<>();
 	private Map<String, Object> properties = new HashMap<>();
 
-	JFunction(String function) {
+	/**
+	 * @see JLootTable#function(String)
+	 */
+	public JFunction(String function) {
 		this.properties.put("function", function);
 	}
 
