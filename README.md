@@ -10,9 +10,6 @@ Well RRP is for you then! RRP allows modders to generate assets and data on the 
 yes, RRP uses a resource pack internally, hence the name, and it's the second to last priority resource pack next to minecraft itself,
 however this means RRP cannot override mod assets, but it can override vanilla ones.
 
-### Isn't this Artifice?
-RRP is more focused on performance, making sure that you don't have to pay the cost of runtime generated resources and data.
-
 ## Adding ARRP
 Gradle:
 ```groovy
@@ -23,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    modImplementation group: 'net.devtech', name: 'arrp', version: '0.1.6'
+    modImplementation group: 'net.devtech', name: 'arrp', version: '0.1.7'
 }
 ```
 
