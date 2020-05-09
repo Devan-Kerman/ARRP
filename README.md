@@ -27,5 +27,5 @@ dependencies {
 ## Using ARRP
 https://github.com/Devan-Kerman/ARRP/wiki
 
-[This repository is licenced under the MPLv2 Licence](https://github.com/Devan-Kerman/ARRP/blob/master/LICENCE)
+[This repository is licenced under the MPLv2 Licence](https://github.com/Devan-Kerman/ARRP/blob/master/LICENSE)
 
