@@ -35,6 +35,8 @@ public interface RuntimeResourcePack extends ResourcePack {
 
 	static Identifier id(String string) {return new Identifier(string);}
 
+	static Identifier id(String namespace, String string) {return new Identifier(namespace, string);}
+
 	/**
 	 * reads, clones, and recolors the texture at the given path, and puts the newly created
 	 * image in the given id.
