@@ -1,67 +1,8 @@
 package net.devtech.arrp.impl;
 
-import static java.lang.String.valueOf;
-
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.IntUnaryOperator;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.logging.Logger;
-
-import javax.imageio.ImageIO;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import io.netty.util.internal.ConcurrentSet;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.logging.Logger;
-import javax.imageio.ImageIO;
 import net.devtech.arrp.ARRP;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.animation.JAnimation;
@@ -75,27 +16,28 @@ import net.devtech.arrp.json.loot.JLootTable;
 import net.devtech.arrp.json.loot.JPool;
 import net.devtech.arrp.json.models.JModel;
 import net.devtech.arrp.json.models.JTextures;
-import net.devtech.arrp.json.recipe.JIngredient;
-import net.devtech.arrp.json.recipe.JIngredients;
-import net.devtech.arrp.json.recipe.JKeys;
-import net.devtech.arrp.json.recipe.JPattern;
-import net.devtech.arrp.json.recipe.JRecipe;
+import net.devtech.arrp.json.recipe.*;
 import net.devtech.arrp.json.tags.JTag;
 import net.devtech.arrp.util.CallableFunction;
 import net.devtech.arrp.util.CountingInputStream;
-import net.devtech.arrp.util.ImageUtil;
-import net.devtech.arrp.util.IteratorIterator;
 import net.devtech.arrp.util.UnsafeByteArrayOutputStream;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
 import net.minecraft.util.Identifier;
+import org.apache.logging.log4j.Level;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.*;
 
 import static java.lang.String.valueOf;
+import static net.devtech.arrp.ARRP.log;
 
 
 /**
@@ -122,8 +64,6 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 									 .registerTypeAdapter(JIngredient.class, new JIngredient.Serializer())
 									 .registerTypeAdapter(JIngredients.class, new JIngredients.Serializer())
 									 .create();
-	// @formatter:on
-	private static final Logger LOGGER = Logger.getLogger("RRP");
 
 	static {
 		Properties properties = new Properties();
@@ -142,13 +82,13 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 			dump = Boolean.parseBoolean(properties.getProperty("dump assets"));
 			performance = Boolean.parseBoolean(properties.getProperty("debug performance"));
 		} catch (Throwable t) {
-			LOGGER.warning("Invalid config, creating new one!");
+			log(Level.WARN,"Invalid config, creating new one!");
 			file.getParentFile()
 			    .mkdirs();
 			try (FileWriter writer = new FileWriter(file)) {
 				properties.store(writer, "number of threads RRP should use for generating resources");
 			} catch (IOException ex) {
-				LOGGER.severe("Unable to write to RRP config!");
+				log(Level.ERROR,"Unable to write to RRP config!");
 				ex.printStackTrace();
 			}
 		}
@@ -307,7 +247,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 				long start = System.currentTimeMillis();
 				this.waiting.lock();
 				long end = System.currentTimeMillis();
-				LOGGER.warning("waited " + (end - start) + "ms for lock in RRP: " + this.id);
+				log(Level.WARN,"waited " + (end - start) + "ms for lock in RRP: " + this.id);
 			} else {
 				this.waiting.lock();
 			}
@@ -316,7 +256,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
 	@Override
 	public void dump() {
-		LOGGER.info("dumping " + this.id + "'s assets and data");
+		log(Level.INFO,"dumping " + this.id + "'s assets and data");
 		// data dump time
 		File folder = new File("rrp.debug/" + this.id.toString()
 		                                             .replace(':', ';') + "/");
@@ -383,7 +323,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 		Supplier<byte[]> supplier = this.getSys(type)
 		                                .get(id);
 		if (supplier == null) {
-			LOGGER.warning("No resource found for " + id);
+			log(Level.WARN,"No resource found for " + id);
 			this.waiting.unlock();
 			return null;
 		}
@@ -438,9 +378,13 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 			object.addProperty("pack_format", this.packVersion);
 			object.addProperty("description", "runtime resource pack");
 			return metaReader.fromJson(object);
+		}else if (metaReader.getKey().equals("language")) {
+			// language key missing defaults, not supported but no need to warn
+			return metaReader.fromJson(new JsonObject());
 		}
-		LOGGER.info("'" + metaReader.getKey() + "' is an unsupported metadata key!");
+		log(Level.INFO,"'" + metaReader.getKey() + "' is an unsupported metadata key!");
 		return metaReader.fromJson(new JsonObject());
+
 	}
 
 	@Override
@@ -450,7 +394,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
 	@Override
 	public void close() {
-		LOGGER.warning("closing rrp " + this.id);
+		log(Level.DEBUG,"closing rrp " + this.id);
 
 		// lock
 		this.lock();
