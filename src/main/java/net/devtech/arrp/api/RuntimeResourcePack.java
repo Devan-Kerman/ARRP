@@ -1,11 +1,16 @@
 package net.devtech.arrp.api;
 
+import java.awt.image.BufferedImage;
+import java.util.concurrent.Future;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
 import net.devtech.arrp.json.animation.JAnimation;
 import net.devtech.arrp.json.blockstate.JState;
 import net.devtech.arrp.json.lang.JLang;
 import net.devtech.arrp.json.loot.JLootTable;
 import net.devtech.arrp.json.models.JModel;
+import net.devtech.arrp.json.recipe.JRecipe;
 import net.devtech.arrp.json.tags.JTag;
 import net.devtech.arrp.util.CallableFunction;
 import net.fabricmc.api.EnvType;
@@ -13,10 +18,6 @@ import net.fabricmc.api.Environment;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
-import java.awt.image.BufferedImage;
-import java.util.concurrent.Future;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
 
 /**
  * a resource pack who's assets and data are evaluated at runtime
@@ -120,6 +121,17 @@ public interface RuntimeResourcePack extends ResourcePack {
 	 * ".json" is automatically appended to the path
 	 */
 	byte[] addTag(Identifier id, JTag tag);
+
+	/**
+     * add a recipe
+	 * <p>
+     * ".json" is automatically appended to the path
+	 *
+	 * @param id the {@linkplain Identifier} identifier of the recipe and that represents its directory
+	 * @param recipe the recipe to add
+	 * @return the new resource
+	 */
+	byte[] addRecipe(Identifier id, JRecipe recipe);
 
 	/**
 	 * invokes the action on the RRP executor, RRPs are thread-safe
