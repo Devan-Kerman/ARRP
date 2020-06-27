@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,12 +24,6 @@ public class JKeys implements Cloneable {
 
     public JKeys key(final String key, final JIngredient value) {
         this.keys.put(key, value);
-
-        return this;
-    }
-
-    public JKeys keyMatchAnyOf(final String key, final JIngredient... acceptableValues) {
-        this.acceptableKeys.put(key, Arrays.asList(acceptableValues));
 
         return this;
     }

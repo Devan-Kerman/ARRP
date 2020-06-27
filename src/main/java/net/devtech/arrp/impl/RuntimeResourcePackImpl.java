@@ -43,6 +43,7 @@ import net.devtech.arrp.json.loot.JLootTable;
 import net.devtech.arrp.json.loot.JPool;
 import net.devtech.arrp.json.models.JModel;
 import net.devtech.arrp.json.models.JTextures;
+import net.devtech.arrp.json.recipe.JIngredient;
 import net.devtech.arrp.json.recipe.JIngredients;
 import net.devtech.arrp.json.recipe.JKeys;
 import net.devtech.arrp.json.recipe.JPattern;
@@ -86,6 +87,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 									 .registerTypeAdapter(JPool.class, new JPool.Serializer())
 									 .registerTypeAdapter(JPattern.class, new JPattern.Serializer())
 									 .registerTypeAdapter(JKeys.class, new JKeys.Serializer())
+									 .registerTypeAdapter(JIngredient.class, new JIngredient.Serializer())
 									 .registerTypeAdapter(JIngredients.class, new JIngredients.Serializer())
 									 .create();
 	// @formatter:on

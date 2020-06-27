@@ -18,6 +18,18 @@ public class JResult {
         return new JResult(id);
     }
 
+    public static JStackedResult itemStack(final Item item, final int count) {
+        return stackedResult(Registry.ITEM.getId(item).toString(), count);
+    }
+
+    public static JStackedResult stackedResult(final String id, final int count) {
+        final JStackedResult stackedResult = new JStackedResult(id);
+
+        stackedResult.count = count;
+
+        return stackedResult;
+    }
+
     @Override
     protected JResult clone() {
         try {

@@ -9,16 +9,20 @@ public abstract class JRecipe implements Cloneable {
         this.type = type;
     }
 
-    public static JShaped shaped(final JPattern pattern, final JKeys keys, final JResult result) {
-        return new JShaped(result, pattern, keys);
+    public static JShapedRecipe shaped(final JPattern pattern, final JKeys keys, final JResult result) {
+        return new JShapedRecipe(result, pattern, keys);
     }
 
-    public static JShapeless shapeless(final JIngredients ingredients, final JResult result) {
-        return new JShapeless(result, ingredients);
+    public static JShapelessRecipe shapeless(final JIngredients ingredients, final JResult result) {
+        return new JShapelessRecipe(result, ingredients);
     }
 
-    public static JSmithing smithing(final JIngredient base, final JIngredient addition, final JResult result) {
-        return new JSmithing(base, addition, result);
+    public static JSmithingRecipe smithing(final JIngredient base, final JIngredient addition, final JResult result) {
+        return new JSmithingRecipe(base, addition, result);
+    }
+
+    public static JBlastingRecipe blasting(final JIngredient ingredient, final JResult result) {
+        return new JBlastingRecipe(ingredient, result);
     }
 
     public JRecipe group(final String group) {
