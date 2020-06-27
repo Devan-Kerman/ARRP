@@ -13,6 +13,7 @@ import net.devtech.arrp.json.blockstate.JState;
 import net.devtech.arrp.json.lang.JLang;
 import net.devtech.arrp.json.loot.JLootTable;
 import net.devtech.arrp.json.models.JModel;
+import net.devtech.arrp.json.recipe.JRecipe;
 import net.devtech.arrp.json.tags.JTag;
 import net.devtech.arrp.util.CallableFunction;
 
@@ -123,6 +124,20 @@ public interface RuntimeResourcePack extends ResourcePack {
 	byte[] addTag(Identifier id, JTag tag);
 
 	/**
+   * add a recipe
+	 * <p>
+   * ".json" is automatically appended to the path
+	 *
+	 * @param id the {@linkplain Identifier} identifier of the recipe and that represents its directory
+	 * @param recipe the recipe to add
+	 * @return the new resource
+	 */
+	byte[] addRecipe(Identifier id, JRecipe recipe);
+
+	/**
+	 * invokes the action on the RRP executor, RRPs are thread-safe
+	 * you can create expensive assets here, all resources are blocked
+	 * until all async tasks are completed
 	 * invokes the action on the RRP executor, RRPs are thread-safe you can create expensive assets here, all resources are blocked until all async tasks are completed
 	 * <p>
 	 * calling an this function from itself will result in a infinite loop

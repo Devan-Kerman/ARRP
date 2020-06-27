@@ -22,8 +22,8 @@
     "arrp.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.7.8+build.187",
+    "fabricloader": ">=0.8.8+build.202",
     "fabric": "*",
-    "minecraft": ">=1.14.4"
+    "minecraft": ">=1.16.1"
   }
 }
