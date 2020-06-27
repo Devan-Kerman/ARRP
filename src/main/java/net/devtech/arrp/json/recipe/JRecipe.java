@@ -17,6 +17,10 @@ public abstract class JRecipe implements Cloneable {
         return new JShapeless(result, ingredients);
     }
 
+    public static JSmithing smithing(final JIngredient base, final JIngredient addition, final JResult result) {
+        return new JSmithing(base, addition, result);
+    }
+
     public JRecipe group(final String group) {
         this.group = group;
 
