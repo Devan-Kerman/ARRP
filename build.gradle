@@ -17,8 +17,6 @@ minecraft {
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-    // https://mvnrepository.com/artifact/org.jetbrains/annotations
-    compileOnly group: 'org.jetbrains', name: 'annotations', version: '19.0.0'
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 }
@@ -55,29 +53,3 @@ jar {
     from "LICENSE"
 }
 
-// configure the maven publication
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            // add all the jars that should be included when publishing to maven
-            artifact(remapJar) {
-                builtBy remapJar
-            }
-            artifact(sourcesJar) {
-                builtBy remapSourcesJar
-            }
-        }
-    }
-    // select the repositories you want to publish to
-    repositories {
-        File gh = new File(projectDir.parentFile.parentFile, "util/Devan-Repo")
-        System.out.println(gh)
-        if (gh.exists()) {
-            maven {
-                url = gh.absolutePath
-            }
-        }
-        // uncomment to publish to the local maven
-        // mavenLocal()
-    }
-}
