@@ -1,9 +1,10 @@
 package net.devtech.arrp.json.models;
 
-import net.minecraft.util.math.Direction;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import net.minecraft.util.math.Direction;
 
 /**
  * a block/item model, static import this class
@@ -19,7 +20,11 @@ public class JModel implements Cloneable {
 	// make serializer
 	private List<JElement> elements = new ArrayList<>();
 
-	JModel() {}
+	/**
+	 * @see #model(String)
+	 * @see #model()
+	 */
+	public JModel() {}
 
 	public static JModel model() {
 		return new JModel();

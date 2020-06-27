@@ -1,8 +1,14 @@
 package net.devtech.arrp.json.animation;
 
+
 public class JFrame implements Cloneable {
 	private final int index;
 	private Integer time;
+
+	/**
+	 * @see JAnimation#frame(int)
+	 */
+	public JFrame(int index) {this.index = index;}
 
 	@Override
 	public JFrame clone() {
@@ -12,6 +18,4 @@ public class JFrame implements Cloneable {
 			throw new InternalError(e);
 		}
 	}
-
-	JFrame(int index) {this.index = index;}
 }

@@ -21,8 +21,10 @@ public class IteratorIterator<T> implements Iterator<T> {
 	@SafeVarargs
 	public IteratorIterator(Iterable<T>... iterables) {
 		this(new Iterator[iterables.length]);
-		if (iterables.length > 0) for (int i = 0; i < iterables.length; i++) {
-			this.iterators[i] = iterables[i].iterator();
+		if (iterables.length > 0) {
+			for (int i = 0; i < iterables.length; i++) {
+				this.iterators[i] = iterables[i].iterator();
+			}
 		}
 	}
 
@@ -35,11 +37,14 @@ public class IteratorIterator<T> implements Iterator<T> {
 		int index = this.index;
 		if (index < this.iterators.length) {
 			Iterator<T> iterator = this.iterators[index];
-			if (iterator.hasNext()) return iterator;
-			else {
+			if (iterator.hasNext()) {
+				return iterator;
+			} else {
 				this.index = index + 1;
 				Iterator<T> ret = this.get(update);
-				if (!update) this.index = index;
+				if (!update) {
+					this.index = index;
+				}
 				return ret;
 			}
 		}
@@ -49,16 +54,19 @@ public class IteratorIterator<T> implements Iterator<T> {
 
 	@Override
 	public boolean hasNext() {
-		return this.get(false).hasNext();
+		return this.get(false)
+		           .hasNext();
 	}
 
 	@Override
 	public T next() {
-		return this.get(true).next();
+		return this.get(true)
+		           .next();
 	}
 
 	@Override
 	public void remove() {
-		this.get(false).remove();
+		this.get(false)
+		    .remove();
 	}
 }

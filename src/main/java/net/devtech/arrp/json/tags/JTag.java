@@ -1,14 +1,19 @@
 package net.devtech.arrp.json.tags;
 
-import net.minecraft.util.Identifier;
 import java.util.ArrayList;
 import java.util.List;
+
+import net.minecraft.util.Identifier;
 
 public class JTag {
 	private Boolean replace;
 	private List<String> values = new ArrayList<>();
 
-	JTag() {}
+	/**
+	 * @see #tag()
+	 * @see #tag(Identifier)
+	 */
+	public JTag() {}
 
 	public static JTag replacingTag() {
 		return tag().replace();
@@ -17,7 +22,7 @@ public class JTag {
 	/**
 	 * whether or not this tag should override all super tags
 	 */
-	JTag replace() {
+	public JTag replace() {
 		this.replace = true;
 		return this;
 	}
@@ -29,7 +34,7 @@ public class JTag {
 	/**
 	 * add a normal item to the tag
 	 */
-	JTag add(Identifier identifier) {
+	public JTag add(Identifier identifier) {
 		this.values.add(identifier.toString());
 		return this;
 	}
@@ -37,7 +42,7 @@ public class JTag {
 	/**
 	 * add a tag to the tag
 	 */
-	JTag tag(Identifier tag) {
+	public JTag tag(Identifier tag) {
 		this.values.add('#' + tag.getNamespace() + ':' + tag.getPath());
 		return this;
 	}

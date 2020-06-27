@@ -72,7 +72,7 @@ publishing {
     repositories {
         File gh = new File(projectDir.parentFile.parentFile, "util/Devan-Repo")
         System.out.println(gh)
-        if(gh.exists()) {
+        if (gh.exists()) {
             maven {
                 url = gh.absolutePath
             }

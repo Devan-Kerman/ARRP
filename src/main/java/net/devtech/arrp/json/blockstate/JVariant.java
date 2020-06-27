@@ -1,14 +1,16 @@
 package net.devtech.arrp.json.blockstate;
 
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+
 import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.math.Direction;
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Map;
 
 public final class JVariant implements Cloneable {
 	private final Map<String, JBlockModel> models = new HashMap<>();
@@ -16,7 +18,7 @@ public final class JVariant implements Cloneable {
 	/**
 	 * @see JState#variant()
 	 */
-	JVariant() {}
+	public JVariant() {}
 
 	public JVariant put(String key, JBlockModel model) {
 		this.models.put(key, model);
@@ -57,21 +59,21 @@ public final class JVariant implements Cloneable {
 		return this;
 	}
 
-	public static class Serializer implements JsonSerializer<JVariant> {
-		@Override
-		public JsonElement serialize(JVariant src, Type typeOfSrc, JsonSerializationContext context) {
-			JsonObject object = new JsonObject();
-			src.models.forEach((s, m) -> object.add(s, context.serialize(m)));
-			return object;
-		}
-	}
-
 	@Override
 	public JVariant clone() {
 		try {
 			return (JVariant) super.clone();
 		} catch (CloneNotSupportedException e) {
 			throw new InternalError(e);
+		}
+	}
+
+	public static class Serializer implements JsonSerializer<JVariant> {
+		@Override
+		public JsonElement serialize(JVariant src, Type typeOfSrc, JsonSerializationContext context) {
+			JsonObject object = new JsonObject();
+			src.models.forEach((s, m) -> object.add(s, context.serialize(m)));
+			return object;
 		}
 	}
 }

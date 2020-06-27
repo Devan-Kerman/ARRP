@@ -1,8 +1,9 @@
 package net.devtech.arrp.util;
 
-import org.jetbrains.annotations.NotNull;
 import java.io.OutputStream;
 import java.util.Arrays;
+
+import org.jetbrains.annotations.NotNull;
 
 public class UnsafeByteArrayOutputStream extends OutputStream implements AutoCloseable {
 	protected byte[] buf;
@@ -44,6 +45,6 @@ public class UnsafeByteArrayOutputStream extends OutputStream implements AutoClo
 	}
 
 	public byte[] getBytes() {
-		return this.buf;
+		return Arrays.copyOf(this.buf, this.index);
 	}
 }

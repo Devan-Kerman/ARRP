@@ -12,7 +12,10 @@ public class JEntry implements Cloneable {
 	private Integer weight;
 	private Integer quality;
 
-	JEntry() {}
+	/**
+	 * @see JLootTable#entry()
+	 */
+	public JEntry() {}
 
 	public JEntry type(String type) {
 		this.type = type;
@@ -25,7 +28,9 @@ public class JEntry implements Cloneable {
 	}
 
 	public JEntry child(String child) {
-		if (this.children == null) this.children = new ArrayList<>();
+		if (this.children == null) {
+			this.children = new ArrayList<>();
+		}
 		this.children.add(child);
 		return this;
 	}
@@ -36,7 +41,9 @@ public class JEntry implements Cloneable {
 	}
 
 	public JEntry function(JFunction function) {
-		if (this.functions == null) this.functions = new ArrayList<>();
+		if (this.functions == null) {
+			this.functions = new ArrayList<>();
+		}
 		this.functions.add(function);
 		return this;
 	}

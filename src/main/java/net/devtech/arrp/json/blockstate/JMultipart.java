@@ -1,12 +1,13 @@
 package net.devtech.arrp.json.blockstate;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 
 public class JMultipart implements Cloneable {
 	// one or list
@@ -16,7 +17,7 @@ public class JMultipart implements Cloneable {
 	/**
 	 * @see JState#multipart(JBlockModel...)
 	 */
-	JMultipart() {}
+	public JMultipart() {}
 
 	@Override
 	public JMultipart clone() {

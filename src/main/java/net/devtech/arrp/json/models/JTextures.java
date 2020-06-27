@@ -1,12 +1,13 @@
 package net.devtech.arrp.json.models;
 
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Map;
 
 public class JTextures {
 	private final Map<String, String> textures = new HashMap<>();
@@ -14,7 +15,7 @@ public class JTextures {
 	/**
 	 * @see JModel#textures()
 	 */
-	JTextures() {}
+	public JTextures() {}
 
 	public JTextures var(String name, String val) {
 		this.textures.put(name, val);

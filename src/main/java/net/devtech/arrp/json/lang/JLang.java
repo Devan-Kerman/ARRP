@@ -1,13 +1,17 @@
 package net.devtech.arrp.json.lang;
 
-import net.minecraft.util.Identifier;
 import java.util.HashMap;
 import java.util.Map;
+
+import net.minecraft.util.Identifier;
 
 public class JLang implements Cloneable {
 	private Map<String, String> lang = new HashMap<>();
 
-	JLang() {}
+	/**
+	 * @see #lang()
+	 */
+	public JLang() {}
 
 	public static JLang lang() {
 		return new JLang();
@@ -61,6 +65,10 @@ public class JLang implements Cloneable {
 
 	public JLang biome(Identifier id, String name) {
 		return this.object("biome", id, name);
+	}
+
+	public Map<String, String> getLang() {
+		return this.lang;
 	}
 
 	@Override

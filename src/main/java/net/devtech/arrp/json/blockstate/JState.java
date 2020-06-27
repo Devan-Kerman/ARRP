@@ -1,18 +1,24 @@
 package net.devtech.arrp.json.blockstate;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 
 public final class JState {
 	private final List<JVariant> variants = new ArrayList<>();
 	private final List<JMultipart> multiparts = new ArrayList<>();
 
-	protected JState() {
+	/**
+	 * @see #state()
+	 * @see #state(JMultipart...)
+	 * @see #state(JVariant...)
+	 */
+	public JState() {
 	}
 
 	public static JState state() {
@@ -28,7 +34,9 @@ public final class JState {
 	}
 
 	public JState add(JVariant variant) {
-		if (!this.multiparts.isEmpty()) throw new IllegalStateException("BlockStates can only have variants *or* multiparts, not both");
+		if (!this.multiparts.isEmpty()) {
+			throw new IllegalStateException("BlockStates can only have variants *or* multiparts, not both");
+		}
 		this.variants.add(variant);
 		return this;
 	}
@@ -42,7 +50,9 @@ public final class JState {
 	}
 
 	public JState add(JMultipart multiparts) {
-		if (!this.variants.isEmpty()) throw new IllegalStateException("BlockStates can only have variants *or* multiparts, not both");
+		if (!this.variants.isEmpty()) {
+			throw new IllegalStateException("BlockStates can only have variants *or* multiparts, not both");
+		}
 		this.multiparts.add(multiparts);
 		return this;
 	}
@@ -87,10 +97,15 @@ public final class JState {
 		public JsonElement serialize(JState src, Type typeOfSrc, JsonSerializationContext context) {
 			JsonObject json = new JsonObject();
 			if (!src.variants.isEmpty()) {
-				if (src.variants.size() == 1) json.add("variants", context.serialize(src.variants.get(0)));
-				else json.add("variants", context.serialize(src.variants));
+				if (src.variants.size() == 1) {
+					json.add("variants", context.serialize(src.variants.get(0)));
+				} else {
+					json.add("variants", context.serialize(src.variants));
+				}
 			}
-			if (!src.multiparts.isEmpty()) json.add("multipart", context.serialize(src.multiparts));
+			if (!src.multiparts.isEmpty()) {
+				json.add("multipart", context.serialize(src.multiparts));
+			}
 			return json;
 		}
 	}
