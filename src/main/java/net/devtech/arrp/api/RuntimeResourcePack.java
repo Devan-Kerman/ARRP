@@ -1,9 +1,5 @@
 package net.devtech.arrp.api;
 
-import java.awt.image.BufferedImage;
-import java.util.concurrent.Future;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
 import net.devtech.arrp.json.animation.JAnimation;
 import net.devtech.arrp.json.blockstate.JState;
@@ -18,6 +14,10 @@ import net.fabricmc.api.Environment;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
+import java.awt.image.BufferedImage;
+import java.util.concurrent.Future;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
 /**
  * a resource pack who's assets and data are evaluated at runtime
