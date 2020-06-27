@@ -9,6 +9,12 @@ public abstract class JRecipe implements Cloneable {
         this.type = type;
     }
 
+    public static JSmithingRecipe smithing(final JIngredient base, final JIngredient addition, final JResult result) {
+        return new JSmithingRecipe(base, addition, result);
+    }
+
+    // crafting
+
     public static JShapedRecipe shaped(final JPattern pattern, final JKeys keys, final JResult result) {
         return new JShapedRecipe(result, pattern, keys);
     }
@@ -17,12 +23,22 @@ public abstract class JRecipe implements Cloneable {
         return new JShapelessRecipe(result, ingredients);
     }
 
-    public static JSmithingRecipe smithing(final JIngredient base, final JIngredient addition, final JResult result) {
-        return new JSmithingRecipe(base, addition, result);
-    }
+    // cooking
 
     public static JBlastingRecipe blasting(final JIngredient ingredient, final JResult result) {
         return new JBlastingRecipe(ingredient, result);
+    }
+
+    public static JSmeltingRecipe smelting(final JIngredient ingredient, final JResult result) {
+        return new JSmeltingRecipe(ingredient, result);
+    }
+
+    public static JCampfireRecipe campfire(final JIngredient ingredient, final JResult result) {
+        return new JCampfireRecipe(ingredient, result);
+    }
+
+    public static JSmokingRecipe smoking(final JIngredient ingredient, final JResult result) {
+        return new JSmokingRecipe(ingredient, result);
     }
 
     public JRecipe group(final String group) {
