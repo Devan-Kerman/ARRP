@@ -16,9 +16,6 @@
   "entrypoints": {
     "preLaunch": [
       "net.devtech.arrp.ARRP"
-    ],
-    "main": [
-      "net.devtech.arrp.Test"
     ]
   },
   "mixins": [

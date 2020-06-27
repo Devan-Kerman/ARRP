@@ -13,6 +13,10 @@ public abstract class JRecipe implements Cloneable {
         return new JSmithingRecipe(base, addition, result);
     }
 
+    public static JStonecuttingRecipe stonecutting(final JIngredient ingredient, final JStackedResult result) {
+        return new JStonecuttingRecipe(ingredient, result);
+    }
+
     // crafting
 
     public static JShapedRecipe shaped(final JPattern pattern, final JKeys keys, final JResult result) {
