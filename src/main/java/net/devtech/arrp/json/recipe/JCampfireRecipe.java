@@ -6,6 +6,16 @@ public class JCampfireRecipe extends JCookingRecipe {
     }
 
     @Override
+    public JCampfireRecipe experience(final float experience) {
+        return (JCampfireRecipe) super.experience(experience);
+    }
+
+    @Override
+    public JCampfireRecipe cookingTime(final int ticks) {
+        return (JCampfireRecipe) super.cookingTime(ticks);
+    }
+
+    @Override
     public JCampfireRecipe group(final String group) {
         return (JCampfireRecipe) super.group(group);
     }
