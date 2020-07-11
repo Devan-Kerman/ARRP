@@ -35,33 +35,6 @@ import javax.imageio.ImageIO;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import io.netty.util.internal.ConcurrentSet;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.logging.Logger;
-import javax.imageio.ImageIO;
 import net.devtech.arrp.ARRP;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.animation.JAnimation;
@@ -83,19 +56,12 @@ import net.devtech.arrp.json.recipe.JRecipe;
 import net.devtech.arrp.json.tags.JTag;
 import net.devtech.arrp.util.CallableFunction;
 import net.devtech.arrp.util.CountingInputStream;
-import net.devtech.arrp.util.ImageUtil;
-import net.devtech.arrp.util.IteratorIterator;
 import net.devtech.arrp.util.UnsafeByteArrayOutputStream;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.resource.ResourceManager;
+
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
 import net.minecraft.util.Identifier;
-
-import static java.lang.String.valueOf;
 
 
 /**
@@ -108,6 +74,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
 	// @formatter:off
 	private static final Gson GSON = new GsonBuilder()
+									 .setPrettyPrinting()
 									 .disableHtmlEscaping()
 									 .registerTypeAdapter(JMultipart.class, new JMultipart.Serializer())
 									 .registerTypeAdapter(JWhen.class, new JWhen.Serializer())
@@ -181,7 +148,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 				CountingInputStream is = new CountingInputStream(target);
 				// repaint image
 				BufferedImage base = ImageIO.read(is);
-				BufferedImage recolored = new BufferedImage(base.getWidth(), base.getHeight(), base.getType());
+				BufferedImage recolored = new BufferedImage(base.getWidth(), base.getHeight(), BufferedImage.TYPE_INT_ARGB);
 				for (int y = 0; y < base.getHeight(); y++) {
 					for (int x = 0; x < base.getWidth(); x++) {
 						recolored.setRGB(x, y, operator.applyAsInt(base.getRGB(x, y)));
