@@ -1,7 +1,9 @@
 package net.devtech.arrp.json.blockstate;
 
+import net.minecraft.util.Identifier;
+
 public class JBlockModel implements Cloneable {
-	private final String model;
+	private final Identifier model;
 	private Integer x;
 	private Integer y;
 	private Boolean uvlock;
@@ -9,8 +11,13 @@ public class JBlockModel implements Cloneable {
 	/**
 	 * @see JState#model(String)
 	 */
-	public JBlockModel(String model) {
+	public JBlockModel(Identifier model) {
 		this.model = model;
+	}
+
+	@Deprecated
+	public JBlockModel(String model) {
+		this(new Identifier(model));
 	}
 
 	@Override

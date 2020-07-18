@@ -13,7 +13,7 @@ public class ARRP implements PreLaunchEntrypoint {
 
 	@Override
 	public void onPreLaunch() {
-		LOGGER.severe("I used the json to destroy the json");
+		LOGGER.fine("I used the json to destroy the json");
 		FabricLoader loader = FabricLoader.getInstance();
 		for (RRPPreGenEntrypoint entrypoint : loader.getEntrypoints("rrp:pregen", RRPPreGenEntrypoint.class)) {
 			RuntimeResourcePackImpl.EXECUTOR_SERVICE.submit(entrypoint::pregen);

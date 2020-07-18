@@ -88,6 +88,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 									 .registerTypeAdapter(JKeys.class, new JKeys.Serializer())
 									 .registerTypeAdapter(JIngredient.class, new JIngredient.Serializer())
 									 .registerTypeAdapter(JIngredients.class, new JIngredients.Serializer())
+									 .registerTypeAdapter(Identifier.class, new Identifier.Serializer())
 									 .create();
 	// @formatter:on
 	private static final Logger LOGGER = Logger.getLogger("RRP");
