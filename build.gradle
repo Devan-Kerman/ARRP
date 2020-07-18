@@ -20,7 +20,7 @@ dependencies {
     // https://mvnrepository.com/artifact/org.jetbrains/annotations
     compileOnly group: 'org.jetbrains', name: 'annotations', version: '19.0.0'
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    modImplementation include("net.fabricmc.fabric-api:fabric-api-base:${project.fabric_base_version}")
 }
 
 processResources {
