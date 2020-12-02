@@ -1,23 +1,23 @@
 package net.devtech.arrp.json.recipe;
 
 public class JSmithingRecipe extends JResultRecipe {
-    private final JIngredient base;
-    private final JIngredient addition;
+	private final JIngredient base;
+	private final JIngredient addition;
 
-    JSmithingRecipe(final JIngredient base, final JIngredient addition, final JResult result) {
-        super("smithing", result);
+	JSmithingRecipe(final JIngredient base, final JIngredient addition, final JResult result) {
+		super("smithing", result);
 
-        this.base = base;
-        this.addition = addition;
-    }
+		this.base = base;
+		this.addition = addition;
+	}
 
-    @Override
-    public JSmithingRecipe group(final String group) {
-        return (JSmithingRecipe) super.group(group);
-    }
+	@Override
+	public JSmithingRecipe group(final String group) {
+		return (JSmithingRecipe) super.group(group);
+	}
 
-    @Override
-    protected JSmithingRecipe clone() {
-        return (JSmithingRecipe) super.clone();
-    }
+	@Override
+	protected JSmithingRecipe clone() {
+		return (JSmithingRecipe) super.clone();
+	}
 }

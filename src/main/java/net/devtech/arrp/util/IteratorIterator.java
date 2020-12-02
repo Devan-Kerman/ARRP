@@ -54,19 +54,16 @@ public class IteratorIterator<T> implements Iterator<T> {
 
 	@Override
 	public boolean hasNext() {
-		return this.get(false)
-		           .hasNext();
+		return this.get(false).hasNext();
 	}
 
 	@Override
 	public T next() {
-		return this.get(true)
-		           .next();
+		return this.get(true).next();
 	}
 
 	@Override
 	public void remove() {
-		this.get(false)
-		    .remove();
+		this.get(false).remove();
 	}
 }

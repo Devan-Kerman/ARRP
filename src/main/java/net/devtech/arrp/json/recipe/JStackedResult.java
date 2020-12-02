@@ -1,9 +1,9 @@
 package net.devtech.arrp.json.recipe;
 
 public class JStackedResult extends JResult {
-    protected Integer count;
+	protected Integer count;
 
-    JStackedResult(final String id) {
-        super(id);
-    }
+	JStackedResult(final String id) {
+		super(id);
+	}
 }

@@ -39,8 +39,7 @@ public class JFunction implements Cloneable {
 	public static class Serializer implements JsonSerializer<JFunction> {
 		@Override
 		public JsonElement serialize(JFunction src, Type typeOfSrc, JsonSerializationContext context) {
-			JsonObject element = context.serialize(src.properties)
-			                            .getAsJsonObject();
+			JsonObject element = context.serialize(src.properties).getAsJsonObject();
 			if (!src.conditions.isEmpty()) {
 				element.add("conditions", context.serialize(src.conditions));
 			}
