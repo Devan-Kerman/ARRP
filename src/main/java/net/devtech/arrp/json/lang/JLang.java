@@ -33,6 +33,7 @@ public class JLang implements Cloneable {
      * @return the file with the new entry.
      * @deprecated use {@link #entry(String, String)} instead.
      */
+    @Deprecated
     public JLang translate(String in, String out) {
         this.lang.put(in, out);
         return this;
