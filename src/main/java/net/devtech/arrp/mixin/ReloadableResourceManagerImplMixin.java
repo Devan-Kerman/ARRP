@@ -23,13 +23,16 @@ import net.minecraft.util.Unit;
 public abstract class ReloadableResourceManagerImplMixin {
 	@Shadow @Final private static Logger LOGGER;
 
-	@Inject (method = "beginMonitoredReload", at = @At (value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;"))
-	private void registerARRPs(Executor prepareExecutor, Executor applyExecutor, CompletableFuture<Unit> initialStage, List<ResourcePack> packs,
-	                           CallbackInfoReturnable<ResourceReloadMonitor> cir) {
+	@Inject (method = "beginMonitoredReload",
+			at = @At (value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;"))
+	private void registerARRPs(Executor prepareExecutor,
+			Executor applyExecutor,
+			CompletableFuture<Unit> initialStage,
+			List<ResourcePack> packs,
+			CallbackInfoReturnable<ResourceReloadMonitor> cir) {
 		LOGGER.info("ARRP register");
 		List<ResourcePack> pack = new ArrayList<>();
-		RRPCallback.EVENT.invoker()
-		                 .insert(pack);
+		RRPCallback.EVENT.invoker().insert(pack);
 		pack.forEach(this::addPack);
 	}
 

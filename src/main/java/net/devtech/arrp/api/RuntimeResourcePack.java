@@ -43,7 +43,8 @@ public interface RuntimeResourcePack extends ResourcePack {
 	/**
 	 * reads, clones, and recolors the texture at the given path, and puts the newly created image in the given id.
 	 *
-	 * <b>if your resource pack is registered at a higher priority than where you expect the texture to be in, mc will be unable to find the asset you are looking for</b>
+	 * <b>if your resource pack is registered at a higher priority than where you expect the texture to be in, mc will
+	 * be unable to find the asset you are looking for</b>
 	 *
 	 * @param identifier the place to put the new texture
 	 * @param target the input stream of the original texture
@@ -53,8 +54,10 @@ public interface RuntimeResourcePack extends ResourcePack {
 
 	/**
 	 * add a lang file for the given language
+	 *
+	 * DO **NOT** CALL THIS METHOD MULTIPLE TIMES FOR THE SAME LANGUAGE, THEY WILL OVERRIDE EACH OTHER!
 	 * <p>
-	 * ex. addLang(id("mymod:en_us", lang().translate("something.something", "test"))
+	 * ex. addLang(MyMod.id("en_us"), lang().translate("something.something", "test"))
 	 */
 	byte[] addLang(Identifier identifier, JLang lang);
 
@@ -68,7 +71,9 @@ public interface RuntimeResourcePack extends ResourcePack {
 	 *
 	 * @see #async(Consumer)
 	 */
-	Future<byte[]> addAsyncResource(ResourceType type, Identifier identifier, CallableFunction<Identifier, byte[]> data);
+	Future<byte[]> addAsyncResource(ResourceType type,
+			Identifier identifier,
+			CallableFunction<Identifier, byte[]> data);
 
 	/**
 	 * add a resource that is lazily evaluated
@@ -91,7 +96,9 @@ public interface RuntimeResourcePack extends ResourcePack {
 	byte[] addData(Identifier path, byte[] data);
 
 	/**
-	 * add a model, Items should go in item/... and Blocks in block/... ex. mymod:items/my_item ".json" is automatically appended to the path
+	 * add a model, Items should go in item/... and Blocks in block/... ex. mymod:items/my_item ".json" is
+	 * automatically
+	 * appended to the path
 	 */
 	byte[] addModel(JModel model, Identifier path);
 
@@ -124,9 +131,9 @@ public interface RuntimeResourcePack extends ResourcePack {
 	byte[] addTag(Identifier id, JTag tag);
 
 	/**
-   * add a recipe
+	 * add a recipe
 	 * <p>
-   * ".json" is automatically appended to the path
+	 * ".json" is automatically appended to the path
 	 *
 	 * @param id the {@linkplain Identifier} identifier of the recipe and that represents its directory
 	 * @param recipe the recipe to add
@@ -135,10 +142,9 @@ public interface RuntimeResourcePack extends ResourcePack {
 	byte[] addRecipe(Identifier id, JRecipe recipe);
 
 	/**
-	 * invokes the action on the RRP executor, RRPs are thread-safe
-	 * you can create expensive assets here, all resources are blocked
-	 * until all async tasks are completed
-	 * invokes the action on the RRP executor, RRPs are thread-safe you can create expensive assets here, all resources are blocked until all async tasks are completed
+	 * invokes the action on the RRP executor, RRPs are thread-safe you can create expensive assets here, all resources
+	 * are blocked until all async tasks are completed invokes the action on the RRP executor, RRPs are thread-safe you
+	 * can create expensive assets here, all resources are blocked until all async tasks are completed
 	 * <p>
 	 * calling an this function from itself will result in a infinite loop
 	 *
