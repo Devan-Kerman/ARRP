@@ -9,8 +9,17 @@ public class JEntry implements Cloneable {
 	private List<String> children;
 	private Boolean expand;
 	private List<JFunction> functions;
+	private List<JCondition> condition;
 	private Integer weight;
 	private Integer quality;
+
+	public JEntry condition(JCondition condition) {
+		if(this.condition == null) {
+			this.condition = new ArrayList<>();
+		}
+		this.condition.add(condition);
+		return this;
+	}
 
 	/**
 	 * @see JLootTable#entry()
