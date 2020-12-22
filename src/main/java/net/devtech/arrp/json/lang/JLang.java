@@ -25,6 +25,14 @@ public class JLang implements Cloneable {
 		return new JLang();
 	}
 
+	/**
+	 * Adds a custom entry to the lang file.
+	 *
+	 * @param in  the translation string
+	 * @param out the in-game name of the object
+	 * @return the file with the new entry.
+	 * @deprecated use {@link #entry(String, String)} instead.
+	 */
 	public JLang translate(String in, String out) {
 		this.lang.put(in, out);
 		return this;
