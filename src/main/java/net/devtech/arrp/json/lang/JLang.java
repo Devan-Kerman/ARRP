@@ -1,10 +1,5 @@
 package net.devtech.arrp.json.lang;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
-
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityType;
@@ -13,13 +8,18 @@ import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 public class JLang implements Cloneable {
-	private Map<String, String> lang = new HashMap<>();
+	private final Map<String, String> lang = new HashMap<>();
 
 	/**
 	 * @see #lang()
 	 */
-	public JLang() {}
+	public JLang() {
+	}
 
 	public static JLang lang() {
 		return new JLang();
@@ -37,6 +37,11 @@ public class JLang implements Cloneable {
 
 	private <T> JLang object(Registry<T> registry, String str, T t, String name) {
 		return this.object(str, Objects.requireNonNull(registry.getId(t), "register your item before calling this"), name);
+	}
+
+	public JLang entry(String entry, String name) {
+		this.lang.put(entry, name);
+		return this;
 	}
 
 	public JLang item(Item item, String name) {
