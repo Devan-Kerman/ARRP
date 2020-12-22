@@ -8,16 +8,16 @@ public class JBlockModel implements Cloneable {
 	private Integer y;
 	private Boolean uvlock;
 
+	@Deprecated
+	public JBlockModel(String model) {
+		this(new Identifier(model));
+	}
+
 	/**
 	 * @see JState#model(String)
 	 */
 	public JBlockModel(Identifier model) {
 		this.model = model;
-	}
-
-	@Deprecated
-	public JBlockModel(String model) {
-		this(new Identifier(model));
 	}
 
 	@Override

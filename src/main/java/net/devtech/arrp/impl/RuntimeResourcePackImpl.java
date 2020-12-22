@@ -95,8 +95,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
 	static {
 		Properties properties = new Properties();
-		int processors = Math.max(Runtime.getRuntime()
-		                                 .availableProcessors() / 2 - 1, 1);
+		int processors = Math.max(Runtime.getRuntime().availableProcessors() / 2 - 1, 1);
 		boolean dump = false;
 		boolean performance = false;
 		properties.setProperty("threads", valueOf(processors));
@@ -111,8 +110,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 			performance = Boolean.parseBoolean(properties.getProperty("debug performance"));
 		} catch (Throwable t) {
 			LOGGER.warning("Invalid config, creating new one!");
-			file.getParentFile()
-			    .mkdirs();
+			file.getParentFile().mkdirs();
 			try (FileWriter writer = new FileWriter(file)) {
 				properties.store(writer, "number of threads RRP should use for generating resources");
 			} catch (IOException ex) {
@@ -149,7 +147,9 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 				CountingInputStream is = new CountingInputStream(target);
 				// repaint image
 				BufferedImage base = ImageIO.read(is);
-				BufferedImage recolored = new BufferedImage(base.getWidth(), base.getHeight(), BufferedImage.TYPE_INT_ARGB);
+				BufferedImage recolored = new BufferedImage(base.getWidth(),
+						base.getHeight(),
+						BufferedImage.TYPE_INT_ARGB);
 				for (int y = 0; y < base.getHeight(); y++) {
 					for (int x = 0; x < base.getWidth(); x++) {
 						recolored.setRGB(x, y, operator.applyAsInt(base.getRGB(x, y)));
@@ -177,40 +177,41 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	}
 
 	@Override
-	public Future<byte[]> addAsyncResource(ResourceType type, Identifier path, CallableFunction<Identifier, byte[]> data) {
+	public Future<byte[]> addAsyncResource(ResourceType type,
+			Identifier path,
+			CallableFunction<Identifier, byte[]> data) {
 		Future<byte[]> future = EXECUTOR_SERVICE.submit(() -> data.get(path));
-		this.getSys(type)
-		    .put(path, () -> {
-			    try {
-				    return future.get();
-			    } catch (InterruptedException | ExecutionException e) {
-				    throw new RuntimeException(e);
-			    }
-		    });
+		this.getSys(type).put(path, () -> {
+			try {
+				return future.get();
+			} catch (InterruptedException | ExecutionException e) {
+				throw new RuntimeException(e);
+			}
+		});
 		return future;
 	}
 
 	@Override
-	public void addLazyResource(ResourceType type, Identifier path, BiFunction<RuntimeResourcePack, Identifier, byte[]> func) {
-		this.getSys(type)
-		    .put(path, new Supplier<byte[]>() {
-			    private byte[] data;
+	public void addLazyResource(ResourceType type,
+			Identifier path,
+			BiFunction<RuntimeResourcePack, Identifier, byte[]> func) {
+		this.getSys(type).put(path, new Supplier<byte[]>() {
+			private byte[] data;
 
-			    @Override
-			    public byte[] get() {
-				    if (this.data == null) {
-					    this.data = func.apply(RuntimeResourcePackImpl.this, path);
-				    }
-				    return this.data;
-			    }
-		    });
+			@Override
+			public byte[] get() {
+				if (this.data == null) {
+					this.data = func.apply(RuntimeResourcePackImpl.this, path);
+				}
+				return this.data;
+			}
+		});
 	}
 
 
 	@Override
 	public byte[] addResource(ResourceType type, Identifier path, byte[] data) {
-		this.getSys(type)
-		    .put(path, () -> data);
+		this.getSys(type).put(path, () -> data);
 		return data;
 	}
 
@@ -257,7 +258,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
 	@Override
 	public byte[] addRecipe(Identifier id, JRecipe recipe) {
-	    return this.addData(fix(id, "recipes", "json"), serialize(recipe));
+		return this.addData(fix(id, "recipes", "json"), serialize(recipe));
 	}
 
 	@Override
@@ -286,26 +287,17 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	public void dump() {
 		LOGGER.info("dumping " + this.id + "'s assets and data");
 		// data dump time
-		File folder = new File("rrp.debug/" + this.id.toString()
-		                                             .replace(':', ';') + "/");
+		File folder = new File("rrp.debug/" + this.id.toString().replace(':', ';') + "/");
 		File assets = new File(folder, "assets");
 		assets.mkdirs();
 		for (Map.Entry<Identifier, Supplier<byte[]>> entry : this.assets.entrySet()) {
-			this.write(assets,
-			           entry.getKey(),
-			           entry.getValue()
-			                .get()
-			);
+			this.write(assets, entry.getKey(), entry.getValue().get());
 		}
 
 		File data = new File(folder, "data");
 		data.mkdir();
 		for (Map.Entry<Identifier, Supplier<byte[]>> entry : this.data.entrySet()) {
-			this.write(data,
-			           entry.getKey(),
-			           entry.getValue()
-			                .get()
-			);
+			this.write(data, entry.getKey(), entry.getValue().get());
 		}
 
 	}
@@ -348,8 +340,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	@Override
 	public InputStream open(ResourceType type, Identifier id) {
 		this.lock();
-		Supplier<byte[]> supplier = this.getSys(type)
-		                                .get(id);
+		Supplier<byte[]> supplier = this.getSys(type).get(id);
 		if (supplier == null) {
 			LOGGER.warning("No resource found for " + id);
 			this.waiting.unlock();
@@ -361,14 +352,17 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
 
 	@Override
-	public Collection<Identifier> findResources(ResourceType type, String namespace, String prefix, int maxDepth, Predicate<String> pathFilter) {
+	public Collection<Identifier> findResources(ResourceType type,
+			String namespace,
+			String prefix,
+			int maxDepth,
+			Predicate<String> pathFilter) {
 		this.lock();
 		Set<Identifier> identifiers = new HashSet<>();
-		for (Identifier identifier : this.getSys(type)
-		                                 .keySet()) {
-			if (identifier.getNamespace()
-			              .equals(namespace) && identifier.getPath()
-			                                              .startsWith(prefix) && pathFilter.test(identifier.getPath())) {
+		for (Identifier identifier : this.getSys(type).keySet()) {
+			if (identifier.getNamespace().equals(namespace) && identifier.getPath().startsWith(prefix) && pathFilter
+					                                                                                              .test(identifier
+							                                                                                                    .getPath())) {
 				identifiers.add(identifier);
 			}
 		}
@@ -379,8 +373,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	@Override
 	public boolean contains(ResourceType type, Identifier id) {
 		this.lock();
-		boolean contains = this.getSys(type)
-		                       .containsKey(id);
+		boolean contains = this.getSys(type).containsKey(id);
 		this.waiting.unlock();
 		return contains;
 	}
@@ -389,8 +382,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	public Set<String> getNamespaces(ResourceType type) {
 		this.lock();
 		Set<String> namespaces = new HashSet<>();
-		for (Identifier identifier : this.getSys(type)
-		                                 .keySet()) {
+		for (Identifier identifier : this.getSys(type).keySet()) {
 			namespaces.add(identifier.getNamespace());
 		}
 		this.waiting.unlock();
@@ -400,8 +392,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	// if it works, don't touch it
 	@Override
 	public <T> T parseMetadata(ResourceMetadataReader<T> metaReader) {
-		if (metaReader.getKey()
-		              .equals("pack")) {
+		if (metaReader.getKey().equals("pack")) {
 			JsonObject object = new JsonObject();
 			object.addProperty("pack_format", this.packVersion);
 			object.addProperty("description", "runtime resource pack");
@@ -433,8 +424,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	private void write(File dir, Identifier identifier, byte[] data) {
 		try {
 			File file = new File(dir, identifier.getPath());
-			file.getParentFile()
-			    .mkdirs();
+			file.getParentFile().mkdirs();
 			FileOutputStream output = new FileOutputStream(file);
 			output.write(data);
 			output.close();

@@ -38,15 +38,21 @@ public class JLang implements Cloneable {
 		return this;
 	}
 
-	private JLang object(String type, Identifier identifier, String translation) {
-		this.lang.put(type + '.' + identifier.getNamespace() + '.' + identifier.getPath(), translation);
-		return this;
+	public JLang item(Item item, String name) {
+		return this.object(Registry.ITEM, "item", item, name);
 	}
 
 	private <T> JLang object(Registry<T> registry, String str, T t, String name) {
-		return this.object(str, Objects.requireNonNull(registry.getId(t), "register your item before calling this"), name);
+		return this.object(str,
+				Objects.requireNonNull(registry.getId(t), "register your item before calling this"),
+				name);
 	}
 
+  private JLang object(String type, Identifier identifier, String translation) {
+		this.lang.put(type + '.' + identifier.getNamespace() + '.' + identifier.getPath(), translation);
+		return this;
+	}
+  
 	public JLang entry(String entry, String name) {
 		this.lang.put(entry, name);
 		return this;
@@ -54,7 +60,6 @@ public class JLang implements Cloneable {
 
 	public JLang item(Item item, String name) {
 		return this.object(Registry.ITEM, "item", item, name);
-	}
 
 	public JLang block(Block block, String name) {
 		return this.object(Registry.BLOCK, "block", block, name);
@@ -104,8 +109,77 @@ public class JLang implements Cloneable {
 		return this.object("mob_effect", id, name);
 	}
 
-	public JLang potion(Identifier id, String name) {
-		return this.object("potion", id, name);
+	/**
+	 * Like {@link JLang#allPotion}, but it adds in the prefixes automatically.
+	 */
+	public JLang allPotionOf(Identifier id, String effectName) {
+		this.allPotion(id,
+				"Potion of " + effectName,
+				"Splash Potion of " + effectName,
+				"Lingering Potion of " + effectName,
+				"Tipped Arrow of " + effectName);
+		return this;
+	}
+
+	public JLang allPotion(Identifier id,
+			String drinkablePotionName,
+			String splashPotionName,
+			String lingeringPotionName,
+			String tippedArrowName) {
+		return this.drinkablePotion(id, drinkablePotionName).splashPotion(id, splashPotionName)
+		           .lingeringPotion(id, lingeringPotionName).tippedArrow(id, tippedArrowName);
+	}
+
+	public JLang tippedArrow(Identifier id, String name) {
+		this.lang.put("item.minecraft.tipped_arrow.effect." + id.getPath(), name);
+		return this;
+	}
+
+	public JLang lingeringPotion(Identifier id, String name) {
+		this.lang.put("item.minecraft.lingering_potion.effect." + id.getPath(), name);
+		return this;
+	}
+
+	public JLang splashPotion(Identifier id, String name) {
+		this.lang.put("item.minecraft.splash_potion.effect." + id.getPath(), name);
+		return this;
+	}
+
+	public JLang drinkablePotion(Identifier id, String name) {
+		this.lang.put("item.minecraft.potion.effect." + id.getPath(), "Potion of " + name);
+		return this;
+	}
+
+	/**
+	 * Like {@link JLang#drinkablePotion}, but it adds in the "Potion of" automatically.
+	 */
+	public JLang drinkablePotionOf(Identifier id, String effectName) {
+		this.lang.put("item.minecraft.potion.effect." + id.getPath(), "Potion of " + effectName);
+		return this;
+	}
+
+	/**
+	 * Like {@link JLang#splashPotion}, but it adds in the "Splash Potion of" automatically.
+	 */
+	public JLang splashPotionOf(Identifier id, String effectName) {
+		this.lang.put("item.minecraft.splash_potion.effect." + id.getPath(), "Splash Potion of " + effectName);
+		return this;
+	}
+
+	/**
+	 * Like {@link JLang#lingeringPotion}, but it adds in the "Lingering Potion of" automatically.
+	 */
+	public JLang lingeringPotionOf(Identifier id, String effectName) {
+		this.lang.put("item.minecraft.lingering_potion.effect." + id.getPath(), "Lingering Potion of " + effectName);
+		return this;
+	}
+
+	/**
+	 * Like {@link JLang#tippedArrow}, but it adds in the "Tipped Arrow of" automatically.
+	 */
+	public JLang tippedArrowOf(Identifier id, String effectName) {
+		this.lang.put("item.minecraft.tipped_arrow.effect." + id.getPath(), "Tipped Arrow of " + effectName);
+		return this;
 	}
 
 	public JLang biome(Identifier id, String name) {
