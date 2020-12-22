@@ -20,7 +20,19 @@ public class JLootTable implements Cloneable {
 		return new JEntry();
 	}
 
+	/**
+	 * @deprecated unintuitive name
+	 * @see #predicate(String)
+	 */
+	@Deprecated
 	public static JCondition condition(String condition) {
+		return new JCondition(condition);
+	}
+
+	/**
+	 * @param condition the predicate's condition identifier
+	 */
+	public static JCondition predicate(String condition) {
 		return new JCondition(condition);
 	}
 

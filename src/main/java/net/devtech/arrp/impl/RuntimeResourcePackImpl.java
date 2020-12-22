@@ -43,6 +43,7 @@ import net.devtech.arrp.json.blockstate.JState;
 import net.devtech.arrp.json.blockstate.JVariant;
 import net.devtech.arrp.json.blockstate.JWhen;
 import net.devtech.arrp.json.lang.JLang;
+import net.devtech.arrp.json.loot.JCondition;
 import net.devtech.arrp.json.loot.JFunction;
 import net.devtech.arrp.json.loot.JLootTable;
 import net.devtech.arrp.json.loot.JPool;
@@ -73,7 +74,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	public static final boolean DEBUG_PERFORMANCE;
 
 	// @formatter:off
-	private static final Gson GSON = new GsonBuilder()
+	public static final Gson GSON = new GsonBuilder()
 									 .setPrettyPrinting()
 									 .disableHtmlEscaping()
 									 .registerTypeAdapter(JMultipart.class, new JMultipart.Serializer())
@@ -89,6 +90,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 									 .registerTypeAdapter(JIngredient.class, new JIngredient.Serializer())
 									 .registerTypeAdapter(JIngredients.class, new JIngredients.Serializer())
 									 .registerTypeAdapter(Identifier.class, new Identifier.Serializer())
+									 .registerTypeAdapter(JCondition.class, new JCondition.Serializer())
 									 .create();
 	// @formatter:on
 	private static final Logger LOGGER = Logger.getLogger("RRP");

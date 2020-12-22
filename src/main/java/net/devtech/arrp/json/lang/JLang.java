@@ -26,7 +26,7 @@ public class JLang implements Cloneable {
     }
 
     /**
-     * Adds a custom entry to the lang file.
+     * Adds a custom entry to the lang file. (deprecated: renamed to a more intuitive name)
      *
      * @param in  the translation string
      * @param out the in-game name of the object
