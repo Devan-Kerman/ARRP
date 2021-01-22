@@ -3,7 +3,7 @@ package net.devtech.arrp.util;
 import java.util.Iterator;
 
 public class IteratorIterator<T> implements Iterator<T> {
-	private static final Iterator EMPTY = new Iterator() {
+	private static final Iterator<?> EMPTY = new Iterator<Object>() {
 		@Override
 		public boolean hasNext() {
 			return false;
@@ -49,7 +49,7 @@ public class IteratorIterator<T> implements Iterator<T> {
 			}
 		}
 
-		return EMPTY;
+		return (Iterator<T>) EMPTY;
 	}
 
 	@Override

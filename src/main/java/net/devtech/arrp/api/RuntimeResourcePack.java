@@ -1,6 +1,7 @@
 package net.devtech.arrp.api;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.InputStream;
 import java.util.concurrent.Future;
 import java.util.function.BiFunction;
@@ -152,8 +153,16 @@ public interface RuntimeResourcePack extends ResourcePack {
 	 */
 	Future<?> async(Consumer<RuntimeResourcePack> action);
 
+	File DEFAULT_OUTPUT = new File("rrp.debug");
 	/**
 	 * forcefully dump all assets and data
 	 */
-	void dump();
+	default void dump() {
+		this.dump(DEFAULT_OUTPUT);
+	}
+
+	/**
+	 * forcefully dump all assets and data to a specified file
+	 */
+	void dump(File file);
 }

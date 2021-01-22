@@ -286,10 +286,10 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	}
 
 	@Override
-	public void dump() {
+	public void dump(File output) {
 		LOGGER.info("dumping " + this.id + "'s assets and data");
 		// data dump time
-		File folder = new File("rrp.debug/" + this.id.toString().replace(':', ';') + "/");
+		File folder = new File(output, this.id.toString().replace(':', ';') + "/");
 		File assets = new File(folder, "assets");
 		assets.mkdirs();
 		for (Map.Entry<Identifier, Supplier<byte[]>> entry : this.assets.entrySet()) {
