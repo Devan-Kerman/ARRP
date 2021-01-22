@@ -1,16 +1,20 @@
 package net.devtech.arrp.impl;
 
-import static java.lang.String.valueOf;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
@@ -29,12 +33,7 @@ import java.util.function.IntUnaryOperator;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
-
 import javax.imageio.ImageIO;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 import net.devtech.arrp.ARRP;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.animation.JAnimation;
@@ -58,11 +57,12 @@ import net.devtech.arrp.json.tags.JTag;
 import net.devtech.arrp.util.CallableFunction;
 import net.devtech.arrp.util.CountingInputStream;
 import net.devtech.arrp.util.UnsafeByteArrayOutputStream;
-
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
 import net.minecraft.util.Identifier;
+
+import static java.lang.String.valueOf;
 
 
 /**
@@ -286,22 +286,32 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	}
 
 	@Override
-	public void dump(File output) {
+	public void dump(Path output) {
 		LOGGER.info("dumping " + this.id + "'s assets and data");
 		// data dump time
-		File folder = new File(output, this.id.toString().replace(':', ';') + "/");
-		File assets = new File(folder, "assets");
-		assets.mkdirs();
-		for (Map.Entry<Identifier, Supplier<byte[]>> entry : this.assets.entrySet()) {
-			this.write(assets, entry.getKey(), entry.getValue().get());
-		}
+		Path folder = output.resolve(this.id.toString().replace(':', ';') + "/");
+		Path assets = folder.resolve("assets");
 
-		File data = new File(folder, "data");
-		data.mkdir();
-		for (Map.Entry<Identifier, Supplier<byte[]>> entry : this.data.entrySet()) {
-			this.write(data, entry.getKey(), entry.getValue().get());
-		}
+		try {
+			Files.createDirectories(assets);
+			for (Map.Entry<Identifier, Supplier<byte[]>> entry : this.assets.entrySet()) {
+				this.write(assets, entry.getKey(), entry.getValue().get());
+			}
 
+			Path data = folder.resolve("data");
+
+			Files.createDirectory(data);
+			for (Map.Entry<Identifier, Supplier<byte[]>> entry : this.data.entrySet()) {
+				this.write(data, entry.getKey(), entry.getValue().get());
+			}
+		} catch (IOException exception) {
+			throw new RuntimeException(exception);
+		}
+	}
+
+	@Override
+	public void dump(File output) {
+		this.dump(Paths.get(output.toURI()));
 	}
 
 	private static byte[] serialize(Object object) {
@@ -423,11 +433,11 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 		this.waiting.unlock();
 	}
 
-	private void write(File dir, Identifier identifier, byte[] data) {
+	private void write(Path dir, Identifier identifier, byte[] data) {
 		try {
-			File file = new File(dir, identifier.getPath());
-			file.getParentFile().mkdirs();
-			FileOutputStream output = new FileOutputStream(file);
+			Path file = dir.resolve(identifier.getPath());
+			Files.createDirectories(file.getParent());
+			OutputStream output = Files.newOutputStream(file);
 			output.write(data);
 			output.close();
 		} catch (IOException e) {
