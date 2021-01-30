@@ -63,6 +63,10 @@ public class JEntry implements Cloneable {
 		return this;
 	}
 
+	public JEntry function(String function) {
+	    return function(JLootTable.function(function));
+    }
+
 	public JEntry condition(JCondition condition) {
 		if(this.conditions == null) {
 			this.conditions = new ArrayList<>();
@@ -70,6 +74,10 @@ public class JEntry implements Cloneable {
 		this.conditions.add(condition);
 		return this;
 	}
+
+	public JEntry condition(String condition) {
+	    return condition(JLootTable.predicate(condition));
+    }
 
 	public JEntry weight(Integer weight) {
 		this.weight = weight;

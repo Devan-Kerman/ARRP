@@ -27,25 +27,25 @@ public class JCondition implements Cloneable {
 		return this;
 	}
 
-	public JCondition addParameter(String key, JsonElement value) {
+	public JCondition parameter(String key, JsonElement value) {
 		this.parameters.add(key, value);
 		return this;
 	}
 
-	public JCondition addParameter(String key, String value) {
-		return addParameter(key, new JsonPrimitive(value));
+	public JCondition parameter(String key, String value) {
+		return parameter(key, new JsonPrimitive(value));
 	}
 
-	public JCondition addParameter(String key, Number value) {
-		return addParameter(key, new JsonPrimitive(value));
+	public JCondition parameter(String key, Number value) {
+		return parameter(key, new JsonPrimitive(value));
 	}
 
-	public JCondition addParameter(String key, Boolean value) {
-		return addParameter(key, new JsonPrimitive(value));
+	public JCondition parameter(String key, Boolean value) {
+		return parameter(key, new JsonPrimitive(value));
 	}
 
-	public JCondition addParameter(String key, Character value) {
-		return addParameter(key, new JsonPrimitive(value));
+	public JCondition parameter(String key, Character value) {
+		return parameter(key, new JsonPrimitive(value));
 	}
 
 	/**
