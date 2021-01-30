@@ -31,20 +31,20 @@ public class JEntry implements Cloneable {
 	}
 
 	public JEntry child(JEntry child) {
-	    if (this == child) {
-	        throw new IllegalArgumentException("Can't add entry as its own child!");
-        }
-        if (this.children == null) {
-            this.children = new ArrayList<>();
-        }
-        this.children.add(child);
-        return this;
-    }
+		if (this == child) {
+			throw new IllegalArgumentException("Can't add entry as its own child!");
+		}
+		if (this.children == null) {
+			this.children = new ArrayList<>();
+		}
+		this.children.add(child);
+		return this;
+	}
 
-    /**
-     * @deprecated unintuitive to use
-     * @see JEntry#child(JEntry)
-     */
+	/**
+	 * @deprecated unintuitive to use
+	 * @see JEntry#child(JEntry)
+	 */
 	@Deprecated
 	public JEntry child(String child) {
 		return child(RuntimeResourcePackImpl.GSON.fromJson(child, JEntry.class));
@@ -63,13 +63,13 @@ public class JEntry implements Cloneable {
 		return this;
 	}
 
-    public JEntry condition(JCondition condition) {
-        if(this.conditions == null) {
-            this.conditions = new ArrayList<>();
-        }
-        this.conditions.add(condition);
-        return this;
-    }
+	public JEntry condition(JCondition condition) {
+		if(this.conditions == null) {
+			this.conditions = new ArrayList<>();
+		}
+		this.conditions.add(condition);
+		return this;
+	}
 
 	public JEntry weight(Integer weight) {
 		this.weight = weight;
