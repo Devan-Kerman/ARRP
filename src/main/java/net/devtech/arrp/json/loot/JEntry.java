@@ -1,25 +1,19 @@
 package net.devtech.arrp.json.loot;
 
+import net.devtech.arrp.impl.RuntimeResourcePackImpl;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class JEntry implements Cloneable {
 	private String type;
 	private String name;
-	private List<String> children;
+	private List<JEntry> children;
 	private Boolean expand;
 	private List<JFunction> functions;
-	private List<JCondition> condition;
+	private List<JCondition> conditions;
 	private Integer weight;
 	private Integer quality;
-
-	public JEntry condition(JCondition condition) {
-		if(this.condition == null) {
-			this.condition = new ArrayList<>();
-		}
-		this.condition.add(condition);
-		return this;
-	}
 
 	/**
 	 * @see JLootTable#entry()
@@ -36,12 +30,24 @@ public class JEntry implements Cloneable {
 		return this;
 	}
 
+	public JEntry child(JEntry child) {
+	    if (this == child) {
+	        throw new IllegalArgumentException("Can't add entry as its own child!");
+        }
+        if (this.children == null) {
+            this.children = new ArrayList<>();
+        }
+        this.children.add(child);
+        return this;
+    }
+
+    /**
+     * @deprecated unintuitive to use
+     * @see JEntry#child(JEntry)
+     */
+	@Deprecated
 	public JEntry child(String child) {
-		if (this.children == null) {
-			this.children = new ArrayList<>();
-		}
-		this.children.add(child);
-		return this;
+		return child(RuntimeResourcePackImpl.GSON.fromJson(child, JEntry.class));
 	}
 
 	public JEntry expand(Boolean expand) {
@@ -56,6 +62,14 @@ public class JEntry implements Cloneable {
 		this.functions.add(function);
 		return this;
 	}
+
+    public JEntry condition(JCondition condition) {
+        if(this.conditions == null) {
+            this.conditions = new ArrayList<>();
+        }
+        this.conditions.add(condition);
+        return this;
+    }
 
 	public JEntry weight(Integer weight) {
 		this.weight = weight;
