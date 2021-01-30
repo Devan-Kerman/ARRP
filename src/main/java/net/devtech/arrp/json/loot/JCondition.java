@@ -4,6 +4,7 @@ import java.lang.reflect.Type;
 
 import com.google.gson.*;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
+import net.minecraft.util.Identifier;
 
 public class JCondition implements Cloneable {
 	private JsonObject parameters = new JsonObject();
@@ -46,6 +47,10 @@ public class JCondition implements Cloneable {
 
 	public JCondition parameter(String key, Character value) {
 		return parameter(key, new JsonPrimitive(value));
+	}
+
+	public JCondition parameter(String key, Identifier value) {
+		return parameter(key, value.toString());
 	}
 
 	/**
