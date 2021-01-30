@@ -3,11 +3,11 @@ package net.devtech.arrp.api;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.concurrent.Future;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.IntUnaryOperator;
-
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
 import net.devtech.arrp.json.animation.JAnimation;
 import net.devtech.arrp.json.blockstate.JState;
@@ -17,7 +17,6 @@ import net.devtech.arrp.json.models.JModel;
 import net.devtech.arrp.json.recipe.JRecipe;
 import net.devtech.arrp.json.tags.JTag;
 import net.devtech.arrp.util.CallableFunction;
-
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
@@ -164,5 +163,13 @@ public interface RuntimeResourcePack extends ResourcePack {
 	/**
 	 * forcefully dump all assets and data to a specified file
 	 */
+	void dump(Path path);
+
+	/**
+	 * forcefully dump all assets and data to a specified file
+	 *
+	 * @deprecated use {@link #dump(Path)}
+	 */
+	@Deprecated
 	void dump(File file);
 }
