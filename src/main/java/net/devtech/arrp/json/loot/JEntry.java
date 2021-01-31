@@ -76,8 +76,8 @@ public class JEntry implements Cloneable {
 	}
 
 	public JEntry condition(String condition) {
-	    return condition(JLootTable.predicate(condition));
-    }
+		return condition(JLootTable.predicate(condition));
+	}
 
 	public JEntry weight(Integer weight) {
 		this.weight = weight;
