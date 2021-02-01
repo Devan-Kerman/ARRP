@@ -59,14 +59,14 @@ public class JFunction implements Cloneable {
 		return this;
 	}
 
-    /**
-     * @deprecated unintuitive name
-     * @see JFunction#condition(JCondition)
-     */
+	/**
+	 * @deprecated unintuitive name
+	 * @see JFunction#condition(JCondition)
+	 */
 	@Deprecated
 	public JFunction add(JCondition condition) {
-	    return condition(condition);
-    }
+		return condition(condition);
+	}
 
 	@Override
 	public JFunction clone() {
