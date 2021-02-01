@@ -2,12 +2,9 @@ package net.devtech.arrp.json.loot;
 
 import java.lang.reflect.Type;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import com.google.gson.*;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
+import net.minecraft.util.Identifier;
 
 public class JCondition implements Cloneable {
 	private JsonObject parameters = new JsonObject();
@@ -17,13 +14,43 @@ public class JCondition implements Cloneable {
 	 * @see JLootTable#predicate(String)
 	 */
 	public JCondition(String condition) {
+		condition(condition);
+	}
+
+	public JCondition condition(String condition) {
 		this.parameters.addProperty("condition", condition);
+		return this;
 	}
 
 	public JCondition set(JsonObject parameters) {
 		parameters.addProperty("condition",this.parameters.get("condition").getAsString());
 		this.parameters = parameters;
 		return this;
+	}
+
+	public JCondition parameter(String key, JsonElement value) {
+		this.parameters.add(key, value);
+		return this;
+	}
+
+	public JCondition parameter(String key, String value) {
+		return parameter(key, new JsonPrimitive(value));
+	}
+
+	public JCondition parameter(String key, Number value) {
+		return parameter(key, new JsonPrimitive(value));
+	}
+
+	public JCondition parameter(String key, Boolean value) {
+		return parameter(key, new JsonPrimitive(value));
+	}
+
+	public JCondition parameter(String key, Character value) {
+		return parameter(key, new JsonPrimitive(value));
+	}
+
+	public JCondition parameter(String key, Identifier value) {
+		return parameter(key, value.toString());
 	}
 
 	/**
