@@ -26,6 +26,25 @@ public class JModel implements Cloneable {
 	 */
 	public JModel() {}
 
+	/**
+	 * @return a new jmodel that does not override it's parent's elements
+	 */
+	public static JModel modelKeepElements() {
+		JModel model = new JModel();
+		model.elements = null;
+		return model;
+	}
+
+	/**
+	 * @return a new jmodel that does not override it's parent's elements
+	 */
+	public static JModel modelKeepElements(String parent) {
+		JModel model = new JModel();
+		model.parent = parent;
+		model.elements = null;
+		return model;
+	}
+
 	public static JModel model() {
 		return new JModel();
 	}
@@ -85,6 +104,9 @@ public class JModel implements Cloneable {
 	}
 
 	public JModel element(JElement... elements) {
+		if(this.elements == null) {
+			this.elements = new ArrayList<>();
+		}
 		this.elements.addAll(Arrays.asList(elements));
 		return this;
 	}

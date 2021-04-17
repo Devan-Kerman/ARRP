@@ -1,8 +1,7 @@
 package net.devtech.arrp.impl;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
+import static java.lang.String.valueOf;
+
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -25,6 +24,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiFunction;
@@ -32,8 +32,13 @@ import java.util.function.Consumer;
 import java.util.function.IntUnaryOperator;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.logging.Logger;
+
 import javax.imageio.ImageIO;
+
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import net.devtech.arrp.ARRP;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.animation.JAnimation;
@@ -57,12 +62,13 @@ import net.devtech.arrp.json.tags.JTag;
 import net.devtech.arrp.util.CallableFunction;
 import net.devtech.arrp.util.CountingInputStream;
 import net.devtech.arrp.util.UnsafeByteArrayOutputStream;
+import org.apache.logging.log4j.LogManager;
+import org.jetbrains.annotations.NotNull;
+
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
 import net.minecraft.util.Identifier;
-
-import static java.lang.String.valueOf;
 
 
 /**
@@ -93,7 +99,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 									 .registerTypeAdapter(JCondition.class, new JCondition.Serializer())
 									 .create();
 	// @formatter:on
-	private static final Logger LOGGER = Logger.getLogger("RRP");
+	private static final org.apache.logging.log4j.Logger LOGGER = LogManager.getLogger("RRP");
 
 	static {
 		Properties properties = new Properties();
@@ -111,16 +117,19 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 			dump = Boolean.parseBoolean(properties.getProperty("dump assets"));
 			performance = Boolean.parseBoolean(properties.getProperty("debug performance"));
 		} catch (Throwable t) {
-			LOGGER.warning("Invalid config, creating new one!");
+			LOGGER.warn("Invalid config, creating new one!");
 			file.getParentFile().mkdirs();
 			try (FileWriter writer = new FileWriter(file)) {
 				properties.store(writer, "number of threads RRP should use for generating resources");
 			} catch (IOException ex) {
-				LOGGER.severe("Unable to write to RRP config!");
+				LOGGER.error("Unable to write to RRP config!");
 				ex.printStackTrace();
 			}
 		}
-		EXECUTOR_SERVICE = Executors.newFixedThreadPool(processors);
+		EXECUTOR_SERVICE = Executors.newFixedThreadPool(processors, new ThreadFactoryBuilder()
+			.setDaemon(true)
+			.setNameFormat("ARRP-Workers-%s")
+			.build());
 		DUMP = dump;
 		DEBUG_PERFORMANCE = performance;
 	}
@@ -149,9 +158,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 				CountingInputStream is = new CountingInputStream(target);
 				// repaint image
 				BufferedImage base = ImageIO.read(is);
-				BufferedImage recolored = new BufferedImage(base.getWidth(),
-						base.getHeight(),
-						BufferedImage.TYPE_INT_ARGB);
+				BufferedImage recolored = new BufferedImage(base.getWidth(), base.getHeight(), BufferedImage.TYPE_INT_ARGB);
 				for (int y = 0; y < base.getHeight(); y++) {
 					for (int x = 0; x < base.getWidth(); x++) {
 						recolored.setRGB(x, y, operator.applyAsInt(base.getRGB(x, y)));
@@ -179,9 +186,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	}
 
 	@Override
-	public Future<byte[]> addAsyncResource(ResourceType type,
-			Identifier path,
-			CallableFunction<Identifier, byte[]> data) {
+	public Future<byte[]> addAsyncResource(ResourceType type, Identifier path, CallableFunction<Identifier, byte[]> data) {
 		Future<byte[]> future = EXECUTOR_SERVICE.submit(() -> data.get(path));
 		this.getSys(type).put(path, () -> {
 			try {
@@ -194,9 +199,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	}
 
 	@Override
-	public void addLazyResource(ResourceType type,
-			Identifier path,
-			BiFunction<RuntimeResourcePack, Identifier, byte[]> func) {
+	public void addLazyResource(ResourceType type, Identifier path, BiFunction<RuntimeResourcePack, Identifier, byte[]> func) {
 		this.getSys(type).put(path, new Supplier<byte[]>() {
 			private byte[] data;
 
@@ -278,7 +281,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 				long start = System.currentTimeMillis();
 				this.waiting.lock();
 				long end = System.currentTimeMillis();
-				LOGGER.warning("waited " + (end - start) + "ms for lock in RRP: " + this.id);
+				LOGGER.warn("waited " + (end - start) + "ms for lock in RRP: " + this.id);
 			} else {
 				this.waiting.lock();
 			}
@@ -300,7 +303,9 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
 			Path data = folder.resolve("data");
 
-			Files.createDirectory(data);
+			if (!Files.exists(data)) {
+				Files.createDirectory(data);
+			}
 			for (Map.Entry<Identifier, Supplier<byte[]>> entry : this.data.entrySet()) {
 				this.write(data, entry.getKey(), entry.getValue().get());
 			}
@@ -312,6 +317,18 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	@Override
 	public void dump(File output) {
 		this.dump(Paths.get(output.toURI()));
+	}
+
+	private void write(Path dir, Identifier identifier, byte[] data) {
+		try {
+			Path file = dir.resolve(identifier.getPath());
+			Files.createDirectories(file.getParent());
+			OutputStream output = Files.newOutputStream(file);
+			output.write(data);
+			output.close();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private static byte[] serialize(Object object) {
@@ -354,7 +371,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 		this.lock();
 		Supplier<byte[]> supplier = this.getSys(type).get(id);
 		if (supplier == null) {
-			LOGGER.warning("No resource found for " + id);
+			LOGGER.warn("No resource found for " + id);
 			this.waiting.unlock();
 			return null;
 		}
@@ -362,19 +379,12 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 		return new ByteArrayInputStream(supplier.get());
 	}
 
-
 	@Override
-	public Collection<Identifier> findResources(ResourceType type,
-			String namespace,
-			String prefix,
-			int maxDepth,
-			Predicate<String> pathFilter) {
+	public Collection<Identifier> findResources(ResourceType type, String namespace, String prefix, int maxDepth, Predicate<String> pathFilter) {
 		this.lock();
 		Set<Identifier> identifiers = new HashSet<>();
 		for (Identifier identifier : this.getSys(type).keySet()) {
-			if (identifier.getNamespace().equals(namespace) && identifier.getPath().startsWith(prefix) && pathFilter
-					                                                                                              .test(identifier
-							                                                                                                    .getPath())) {
+			if (identifier.getNamespace().equals(namespace) && identifier.getPath().startsWith(prefix) && pathFilter.test(identifier.getPath())) {
 				identifiers.add(identifier);
 			}
 		}
@@ -421,7 +431,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
 	@Override
 	public void close() {
-		LOGGER.warning("closing rrp " + this.id);
+		LOGGER.info("closing rrp " + this.id);
 
 		// lock
 		this.lock();
@@ -431,17 +441,5 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
 		// unlock
 		this.waiting.unlock();
-	}
-
-	private void write(Path dir, Identifier identifier, byte[] data) {
-		try {
-			Path file = dir.resolve(identifier.getPath());
-			Files.createDirectories(file.getParent());
-			OutputStream output = Files.newOutputStream(file);
-			output.write(data);
-			output.close();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
 	}
 }

@@ -11,11 +11,7 @@ import net.fabricmc.fabric.api.event.EventFactory;
 
 public interface RRPCallback {
 	Event<RRPCallback> EVENT = EventFactory.createArrayBacked(RRPCallback.class, r -> rs -> {
-		IrremovableList<ResourcePack> packs = new IrremovableList<>(rs, pack -> {
-			if (pack instanceof RuntimeResourcePack) {
-				((RuntimeResourcePack) pack).dump();
-			}
-		});
+		IrremovableList<ResourcePack> packs = new IrremovableList<>(rs, $ -> {});
 		for (RRPCallback callback : r) {
 			callback.insert(packs);
 		}

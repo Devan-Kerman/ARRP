@@ -153,6 +153,7 @@ public interface RuntimeResourcePack extends ResourcePack {
 	Future<?> async(Consumer<RuntimeResourcePack> action);
 
 	File DEFAULT_OUTPUT = new File("rrp.debug");
+
 	/**
 	 * forcefully dump all assets and data
 	 */
