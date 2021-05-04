@@ -5,6 +5,8 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityType;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.potion.Potion;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -55,24 +57,78 @@ public class JLang implements Cloneable {
         return this;
     }
 
+
+    /**
+     * adds a translation key for an item, respects {@link Item#getTranslationKey()}
+     */
+    public JLang itemRespect(Item item, String name) {
+        this.lang.put(item.getTranslationKey(), name);
+        return this;
+    }
+
+    public JLang item(ItemStack stack, String name) {
+        this.lang.put(stack.getTranslationKey(), name);
+        return this;
+    }
+
+    /**
+     * @see JLang#itemRespect(Item, String) uses the {@link Item#getTranslationKey()}}
+     */
+    @Deprecated
     public JLang item(Item item, String name) {
         return this.object(Registry.ITEM, "item", item, name);
     }
 
+    /**
+     * adds a translation key for an block, respects {@link Block#getTranslationKey()}
+     */
+    public JLang blockRespect(Block block, String name) {
+        this.lang.put(block.getTranslationKey(), name);
+        return this;
+    }
+
+    /**
+     * @see JLang#blockRespect(Block, String) uses the {@link Block#getTranslationKey()}}
+     */
+    @Deprecated
     public JLang block(Block block, String name) {
         return this.object(Registry.BLOCK, "block", block, name);
     }
 
-    public JLang fluid(Fluid id, String name) {
-        return this.object(Registry.FLUID, "fluid", id, name);
+    public JLang fluid(Fluid fluid, String name) {
+        return this.object(Registry.FLUID, "fluid", fluid, name);
     }
 
-    public JLang entity(EntityType<?> id, String name) {
-        return this.object(Registry.ENTITY_TYPE, "entity_type", id, name);
+    /**
+     * adds a translation key for an entity, respects {@link EntityType#getTranslationKey()}
+     */
+    public JLang entityRespect(EntityType<?> type, String name) {
+        this.lang.put(type.getTranslationKey(), name);
+        return this;
     }
 
-    public JLang enchantment(Enchantment id, String name) {
-        return this.object(Registry.ENCHANTMENT, "enchantment", id, name);
+    /**
+     * @see JLang#entityRespect(EntityType, String) uses the {@link EntityType#getTranslationKey()}}
+     */
+    @Deprecated
+    public JLang entity(EntityType<?> type, String name) {
+        return this.object(Registry.ENTITY_TYPE, "entity_type", type, name);
+    }
+
+    /**
+     * adds a translation key for an entity, respects {@link Enchantment#getTranslationKey()}
+     */
+    public JLang enchantmentRespect(Enchantment enchantment, String name) {
+        this.lang.put(enchantment.getTranslationKey(), name);
+        return this;
+    }
+
+    /**
+     * @see JLang#enchantmentRespect(Enchantment, String) uses the {@link Enchantment#getTranslationKey()}}
+     */
+    @Deprecated
+    public JLang enchantment(Enchantment enchantment, String name) {
+        return this.object(Registry.ENCHANTMENT, "enchantment", enchantment, name);
     }
 
     public JLang item(Identifier item, String name) {

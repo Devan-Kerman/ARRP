@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 
 /**
@@ -45,6 +46,10 @@ public class JModel implements Cloneable {
 		return model;
 	}
 
+	public static JModel modelKeepElements(Identifier identifier) {
+		return modelKeepElements(identifier.toString());
+	}
+
 	public static JModel model() {
 		return new JModel();
 	}
@@ -53,6 +58,10 @@ public class JModel implements Cloneable {
 		JModel model = new JModel();
 		model.parent = parent;
 		return model;
+	}
+
+	public static JModel model(Identifier identifier) {
+		return model(identifier.toString());
 	}
 
 	public static JDisplay display() {

@@ -9,6 +9,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
+import net.minecraft.util.Identifier;
+
 public final class JState {
 	private final List<JVariant> variants = new ArrayList<>();
 	private final List<JMultipart> multiparts = new ArrayList<>();
@@ -68,6 +70,10 @@ public final class JState {
 	}
 
 	public static JBlockModel model(String id) {
+		return new JBlockModel(id);
+	}
+
+	public static JBlockModel model(Identifier id) {
 		return new JBlockModel(id);
 	}
 

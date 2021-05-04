@@ -7,7 +7,7 @@ public class JFace implements Cloneable {
 	private final String texture;
 	private String cullface;
 	private Integer rotation;
-	private Integer tintIndex;
+	private Integer tintindex;
 
 	/**
 	 * @see JModel#face(String)
@@ -45,7 +45,7 @@ public class JFace implements Cloneable {
 	}
 
 	public JFace tintIndex(int index) {
-		this.tintIndex = index;
+		this.tintindex = index;
 		return this;
 	}
 
