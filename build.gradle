@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.4-SNAPSHOT'
+    id 'fabric-loom' version '0.6-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -10,17 +10,11 @@ archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
 
-
-minecraft {
-}
-
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-    // https://mvnrepository.com/artifact/org.jetbrains/annotations
-    compileOnly group: 'org.jetbrains', name: 'annotations', version: '19.0.0'
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    modImplementation include("net.fabricmc.fabric-api:fabric-api-base:${project.fabric_base_version}")
+    modImplementation include(fabricApi.module('fabric-api-base', project.fabric_version))
 }
 
 processResources {
