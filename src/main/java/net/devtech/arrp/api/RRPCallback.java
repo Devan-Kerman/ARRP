@@ -25,7 +25,8 @@ public interface RRPCallback {
 	});
 
 	/**
-	 * @deprecated use {@link #BEFORE_VANILLA} instead
+	 * @deprecated unintuitive name
+	 * @see #BEFORE_VANILLA
 	 */
 	@Deprecated
 	Event<RRPCallback> EVENT = BEFORE_VANILLA;
