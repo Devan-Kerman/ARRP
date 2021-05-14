@@ -28,7 +28,7 @@ public interface RRPCallback {
 	 * @deprecated use {@link #BEFORE_VANILLA} instead
 	 */
 	@Deprecated
-	Event<RRPCallback> EVENT = AFTER_VANILLA;
+	Event<RRPCallback> EVENT = BEFORE_VANILLA;
 
 	/**
 	 * you can only add resource packs to this list, you may not remove them
