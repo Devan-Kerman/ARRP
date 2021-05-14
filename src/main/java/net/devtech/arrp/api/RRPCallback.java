@@ -10,12 +10,25 @@ import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 
 public interface RRPCallback {
-	Event<RRPCallback> EVENT = EventFactory.createArrayBacked(RRPCallback.class, r -> rs -> {
+	Event<RRPCallback> BEFORE_VANILLA = EventFactory.createArrayBacked(RRPCallback.class, r -> rs -> {
 		IrremovableList<ResourcePack> packs = new IrremovableList<>(rs, $ -> {});
 		for (RRPCallback callback : r) {
 			callback.insert(packs);
 		}
 	});
+
+	Event<RRPCallback> AFTER_VANILLA = EventFactory.createArrayBacked(RRPCallback.class, r -> rs -> {
+		IrremovableList<ResourcePack> packs = new IrremovableList<>(rs, $ -> {});
+		for (RRPCallback callback : r) {
+			callback.insert(packs);
+		}
+	});
+
+	/**
+	 * @deprecated use {@link #BEFORE_VANILLA} instead
+	 */
+	@Deprecated
+	Event<RRPCallback> EVENT = AFTER_VANILLA;
 
 	/**
 	 * you can only add resource packs to this list, you may not remove them
