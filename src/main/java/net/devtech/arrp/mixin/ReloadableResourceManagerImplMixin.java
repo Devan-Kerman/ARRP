@@ -30,9 +30,22 @@ public abstract class ReloadableResourceManagerImplMixin {
 			CompletableFuture<Unit> initialStage,
 			List<ResourcePack> packs,
 			CallbackInfoReturnable<ResourceReloadMonitor> cir) {
-		LOGGER.info("ARRP register");
+		LOGGER.info("ARRP register - before vanilla");
 		List<ResourcePack> pack = new ArrayList<>();
-		RRPCallback.EVENT.invoker().insert(pack);
+		RRPCallback.BEFORE_VANILLA.invoker().insert(pack);
+		pack.forEach(this::addPack);
+	}
+
+	@Inject (method = "beginMonitoredReload",
+			at = @At(value = "RETURN", shift = At.Shift.BEFORE))
+	private void registerARRPsAfter(Executor prepareExecutor,
+			Executor applyExecutor,
+			CompletableFuture<Unit> initialStage,
+			List<ResourcePack> packs,
+			CallbackInfoReturnable<ResourceReloadMonitor> cir) {
+		LOGGER.info("ARRP register - after vanilla");
+		List<ResourcePack> pack = new ArrayList<>();
+		RRPCallback.AFTER_VANILLA.invoker().insert(pack);
 		pack.forEach(this::addPack);
 	}
 
