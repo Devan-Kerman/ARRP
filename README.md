@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    modImplementation group: 'net.devtech', name: 'arrp', version: '0.3.12'
+    modImplementation group: 'net.devtech', name: 'arrp', version: '0.4.1'
 }
 ```
 
