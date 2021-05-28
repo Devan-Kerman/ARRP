@@ -13,14 +13,17 @@ however this means RRP cannot override mod assets, but it can override vanilla o
 ## Adding ARRP
 Gradle:
 ```groovy
+// should work for both groovy and kotlin DSL
 repositories {
 	maven {
-		url = 'https://raw.githubusercontent.com/Devan-Kerman/Devan-Repo/master/'
+		url uri("https://raw.githubusercontent.com/Devan-Kerman/Devan-Repo/master/")
 	}
 }
 
 dependencies {
-    modImplementation group: 'net.devtech', name: 'arrp', version: '0.4.1'
+    modImplementation("net.devtech:arrp:0.4.1")
+    // I never break backwards compatibility, so just fetching the latest version should be fine
+    // modImplementation("net.devtech:arrp:0.+")
 }
 ```
 
