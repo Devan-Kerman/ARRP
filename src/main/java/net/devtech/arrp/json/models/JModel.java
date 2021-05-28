@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import net.devtech.arrp.json.loot.JCondition;
+
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 
@@ -20,6 +22,7 @@ public class JModel implements Cloneable {
 	private JTextures textures;
 	// make serializer
 	private List<JElement> elements = new ArrayList<>();
+	private List<JOverride> overrides;
 
 	/**
 	 * @see #model(String)
@@ -60,6 +63,10 @@ public class JModel implements Cloneable {
 		return model;
 	}
 
+	public static JOverride condition(JCondition predicate, Identifier model) {
+		return new JOverride(predicate, model.toString());
+	}
+
 	public static JModel model(Identifier identifier) {
 		return model(identifier.toString());
 	}
@@ -90,6 +97,12 @@ public class JModel implements Cloneable {
 
 	public static JTextures textures() {
 		return new JTextures();
+	}
+
+	public JModel addOverride(JOverride override) {
+		if(this.overrides == null) this.overrides = new ArrayList<>();
+		this.overrides.add(override);
+		return this;
 	}
 
 	public JModel parent(String parent) {
