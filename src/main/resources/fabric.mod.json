@@ -24,5 +24,10 @@
   "depends": {
     "fabricloader": ">=0.8.8+build.202",
     "minecraft": ">=1.16.1"
+  },
+  "custom": {
+    "modmenu": {
+      "badges": [ "library" ]
+    }  
   }
 }
