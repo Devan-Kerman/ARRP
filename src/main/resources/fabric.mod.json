@@ -11,7 +11,7 @@
     "sources": "https://github.com/Devan-Kerman/RRP"
   },
   "license": "MPLv2",
-  "icon": "assets/stated/icon.png",
+  "icon": "assets/arrp/icon.png",
   "environment": "*",
   "entrypoints": {
     "preLaunch": [

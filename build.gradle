@@ -64,14 +64,15 @@ publishing {
     }
     // select the repositories you want to publish to
     repositories {
-        File gh = new File(projectDir.parentFile.parentFile, "util/Devan-Repo")
-        System.out.println(gh)
-        if (gh.exists()) {
-            maven {
-                url = gh.absolutePath
+        maven {
+            def mavenUrl = project.hasProperty('maven_url') ? project.property('maven_url') : ""
+            url mavenUrl
+            if (mavenUrl.startsWith("http")) {
+                credentials {
+                    username project.hasProperty('maven_username') ? project.property('maven_username') : ""
+                    password project.hasProperty('maven_password') ? project.property('maven_password') : ""
+                }
             }
         }
-        // uncomment to publish to the local maven
-        // mavenLocal()
     }
 }

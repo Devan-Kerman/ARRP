@@ -63,8 +63,12 @@ public class JModel implements Cloneable {
 		return model;
 	}
 
-	public static JOverride condition(JCondition predicate, Identifier model) {
+	public static JOverride override(JCondition predicate, Identifier model) {
 		return new JOverride(predicate, model.toString());
+	}
+
+	public static JCondition condition() {
+		return new JCondition(null);
 	}
 
 	public static JModel model(Identifier identifier) {

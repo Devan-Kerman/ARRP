@@ -10,7 +10,7 @@ public class JOverride extends BaseClonable<JOverride> {
 	public final String model;
 
 	/**
-	 * @see JModel#condition(JCondition, Identifier)
+	 * @see JModel#override(JCondition, Identifier)
 	 */
 	public JOverride(JCondition condition, String model) {
 		this.predicate = condition;
