@@ -69,6 +69,7 @@ import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 
 
 /**
@@ -139,6 +140,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	private final Lock waiting = new ReentrantLock();
 	private final Map<Identifier, Supplier<byte[]>> data = new ConcurrentHashMap<>();
 	private final Map<Identifier, Supplier<byte[]>> assets = new ConcurrentHashMap<>();
+	private final Map<String, Supplier<byte[]>> root = new ConcurrentHashMap<>();
 
 	public RuntimeResourcePackImpl(Identifier id) {
 		this(id, 5);
@@ -200,23 +202,37 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
 	@Override
 	public void addLazyResource(ResourceType type, Identifier path, BiFunction<RuntimeResourcePack, Identifier, byte[]> func) {
-		this.getSys(type).put(path, new Supplier<byte[]>() {
-			private byte[] data;
-
-			@Override
-			public byte[] get() {
-				if (this.data == null) {
-					this.data = func.apply(RuntimeResourcePackImpl.this, path);
-				}
-				return this.data;
-			}
-		});
+		this.getSys(type).put(path, new Memoized<>(func, path));
 	}
 
 
 	@Override
 	public byte[] addResource(ResourceType type, Identifier path, byte[] data) {
 		this.getSys(type).put(path, () -> data);
+		return data;
+	}
+
+	@Override
+	public Future<byte[]> addAsyncRootResource(String path, CallableFunction<String, byte[]> data) {
+		Future<byte[]> future = EXECUTOR_SERVICE.submit(() -> data.get(path));
+		this.root.put(path, () -> {
+			try {
+				return future.get();
+			} catch (InterruptedException | ExecutionException e) {
+				throw new RuntimeException(e);
+			}
+		});
+		return future;
+	}
+
+	@Override
+	public void addLazyRootResource(String path, BiFunction<RuntimeResourcePack, String, byte[]> data) {
+		this.root.put(path, new Memoized<>(data, path));
+	}
+
+	@Override
+	public byte[] addRootResource(String path, byte[] data) {
+		this.root.put(path, () -> data);
 		return data;
 	}
 
@@ -360,7 +376,14 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	@Override
 	public InputStream openRoot(String fileName) {
 		if (!fileName.contains("/") && !fileName.contains("\\")) {
-			return ARRP.class.getResourceAsStream("/resource/" + fileName);
+			this.lock();
+			Supplier<byte[]> supplier = this.root.get(fileName);
+			if (supplier == null) {
+				this.waiting.unlock();
+				return null;
+			}
+			this.waiting.unlock();
+			return new ByteArrayInputStream(supplier.get());
 		} else {
 			throw new IllegalArgumentException("File name can't be a path");
 		}
@@ -441,5 +464,24 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
 		// unlock
 		this.waiting.unlock();
+	}
+
+	private class Memoized<T> implements Supplier<byte[]> {
+		private final BiFunction<RuntimeResourcePack, T, byte[]> func;
+		private final T path;
+		private byte[] data;
+
+		public Memoized(BiFunction<RuntimeResourcePack, T, byte[]> func, T path) {
+			this.func = func;
+			this.path = path;
+		}
+
+		@Override
+		public byte[] get() {
+			if (this.data == null) {
+				this.data = func.apply(RuntimeResourcePackImpl.this, path);
+			}
+			return this.data;
+		}
 	}
 }

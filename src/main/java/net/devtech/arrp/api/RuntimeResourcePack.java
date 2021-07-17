@@ -86,6 +86,29 @@ public interface RuntimeResourcePack extends ResourcePack {
 	byte[] addResource(ResourceType type, Identifier path, byte[] data);
 
 	/**
+	 * adds an async root resource, this is evaluated off-thread, this does not hold all resource retrieval unlike
+	 *
+	 * A root resource is something like pack.png, pack.mcmeta, etc. By default ARRP generates a default mcmeta
+	 * @see #async(Consumer)
+	 */
+	Future<byte[]> addAsyncRootResource(String path,
+			CallableFunction<String, byte[]> data);
+
+	/**
+	 * add a root resource that is lazily evaluated.
+	 *
+	 * A root resource is something like pack.png, pack.mcmeta, etc. By default ARRP generates a default mcmeta
+	 */
+	void addLazyRootResource(String path, BiFunction<RuntimeResourcePack, String, byte[]> data);
+
+	/**
+	 * add a raw resource to the root path
+	 *
+	 * A root resource is something like pack.png, pack.mcmeta, etc. By default ARRP generates a default mcmeta
+	 */
+	byte[] addRootResource(String path, byte[] data);
+
+	/**
 	 * add a clientside resource
 	 */
 	byte[] addAsset(Identifier path, byte[] data);
