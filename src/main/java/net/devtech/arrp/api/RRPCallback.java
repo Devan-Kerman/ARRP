@@ -10,6 +10,9 @@ import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 
 public interface RRPCallback {
+	/**
+	 * Register your resource pack at a higher priority than minecraft and mod resources
+	 */
 	Event<RRPCallback> BEFORE_VANILLA = EventFactory.createArrayBacked(RRPCallback.class, r -> rs -> {
 		IrremovableList<ResourcePack> packs = new IrremovableList<>(rs, $ -> {});
 		for (RRPCallback callback : r) {
@@ -17,6 +20,9 @@ public interface RRPCallback {
 		}
 	});
 
+	/**
+	 * Register your resource pack at a lower priority than minecraft and mod resources
+	 */
 	Event<RRPCallback> AFTER_VANILLA = EventFactory.createArrayBacked(RRPCallback.class, r -> rs -> {
 		IrremovableList<ResourcePack> packs = new IrremovableList<>(rs, $ -> {});
 		for (RRPCallback callback : r) {

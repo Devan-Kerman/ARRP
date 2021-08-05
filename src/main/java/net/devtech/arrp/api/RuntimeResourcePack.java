@@ -2,12 +2,19 @@ package net.devtech.arrp.api;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Path;
 import java.util.concurrent.Future;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.IntUnaryOperator;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
+
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufOutputStream;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
 import net.devtech.arrp.json.animation.JAnimation;
 import net.devtech.arrp.json.blockstate.JState;
@@ -17,12 +24,18 @@ import net.devtech.arrp.json.models.JModel;
 import net.devtech.arrp.json.recipe.JRecipe;
 import net.devtech.arrp.json.tags.JTag;
 import net.devtech.arrp.util.CallableFunction;
+import org.jetbrains.annotations.ApiStatus;
+
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 
 /**
  * a resource pack who's assets and data are evaluated at runtime
+ *
+ * remember to register it!
+ * @see RRPCallback
  */
 public interface RuntimeResourcePack extends ResourcePack {
 	/**
@@ -39,6 +52,7 @@ public interface RuntimeResourcePack extends ResourcePack {
 	static Identifier id(String string) {return new Identifier(string);}
 
 	static Identifier id(String namespace, String string) {return new Identifier(namespace, string);}
+
 
 	/**
 	 * reads, clones, and recolors the texture at the given path, and puts the newly created image in the given id.
@@ -184,10 +198,9 @@ public interface RuntimeResourcePack extends ResourcePack {
 		this.dump(DEFAULT_OUTPUT);
 	}
 
-	/**
-	 * forcefully dump all assets and data to a specified file
-	 */
-	void dump(Path path);
+	void dumpDirect(Path path);
+
+	void load(Path path) throws IOException;
 
 	/**
 	 * forcefully dump all assets and data to a specified file
@@ -196,4 +209,25 @@ public interface RuntimeResourcePack extends ResourcePack {
 	 */
 	@Deprecated
 	void dump(File file);
+
+	/**
+	 * forcefully dump all assets and data into `namespace;path/`, useful for debugging
+	 */
+	default void dump(Path path) {
+		Identifier id = this.getId();
+		Path folder = path.resolve(id.getNamespace() + ';' + id.getPath());
+		this.dumpDirect(folder);
+	}
+
+	/**
+	 * @see ByteBufOutputStream
+	 */
+	void dump(ZipOutputStream stream) throws IOException;
+
+	/**
+	 * @see ByteBufInputStream
+	 */
+	void load(ZipInputStream stream) throws IOException;
+
+	Identifier getId();
 }

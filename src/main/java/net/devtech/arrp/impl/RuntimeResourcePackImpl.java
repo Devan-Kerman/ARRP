@@ -24,7 +24,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiFunction;
@@ -32,6 +31,10 @@ import java.util.function.Consumer;
 import java.util.function.IntUnaryOperator;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import javax.imageio.ImageIO;
 
@@ -39,7 +42,6 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import net.devtech.arrp.ARRP;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.animation.JAnimation;
 import net.devtech.arrp.json.blockstate.JMultipart;
@@ -63,18 +65,20 @@ import net.devtech.arrp.util.CallableFunction;
 import net.devtech.arrp.util.CountingInputStream;
 import net.devtech.arrp.util.UnsafeByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Util;
 
 
 /**
  * @see RuntimeResourcePack
+ * @deprecated internal
  */
+@Deprecated
+@ApiStatus.Internal
 public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePack {
 	public static final ExecutorService EXECUTOR_SERVICE;
 	public static final boolean DUMP;
@@ -112,25 +116,22 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 		properties.setProperty("debug performance", "false");
 
 		File file = new File("config/rrp.properties");
-		try (FileReader reader = new FileReader(file)) {
+		try(FileReader reader = new FileReader(file)) {
 			properties.load(reader);
 			processors = Integer.parseInt(properties.getProperty("threads"));
 			dump = Boolean.parseBoolean(properties.getProperty("dump assets"));
 			performance = Boolean.parseBoolean(properties.getProperty("debug performance"));
-		} catch (Throwable t) {
+		} catch(Throwable t) {
 			LOGGER.warn("Invalid config, creating new one!");
 			file.getParentFile().mkdirs();
-			try (FileWriter writer = new FileWriter(file)) {
+			try(FileWriter writer = new FileWriter(file)) {
 				properties.store(writer, "number of threads RRP should use for generating resources");
-			} catch (IOException ex) {
+			} catch(IOException ex) {
 				LOGGER.error("Unable to write to RRP config!");
 				ex.printStackTrace();
 			}
 		}
-		EXECUTOR_SERVICE = Executors.newFixedThreadPool(processors, new ThreadFactoryBuilder()
-			.setDaemon(true)
-			.setNameFormat("ARRP-Workers-%s")
-			.build());
+		EXECUTOR_SERVICE = Executors.newFixedThreadPool(processors, new ThreadFactoryBuilder().setDaemon(true).setNameFormat("ARRP-Workers-%s").build());
 		DUMP = dump;
 		DEBUG_PERFORMANCE = performance;
 	}
@@ -161,8 +162,8 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 				// repaint image
 				BufferedImage base = ImageIO.read(is);
 				BufferedImage recolored = new BufferedImage(base.getWidth(), base.getHeight(), BufferedImage.TYPE_INT_ARGB);
-				for (int y = 0; y < base.getHeight(); y++) {
-					for (int x = 0; x < base.getWidth(); x++) {
+				for(int y = 0; y < base.getHeight(); y++) {
+					for(int x = 0; x < base.getWidth(); x++) {
 						recolored.setRGB(x, y, operator.applyAsInt(base.getRGB(x, y)));
 					}
 				}
@@ -170,7 +171,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 				UnsafeByteArrayOutputStream baos = new UnsafeByteArrayOutputStream(is.bytes());
 				ImageIO.write(recolored, "png", baos);
 				return baos.getBytes();
-			} catch (Throwable e) {
+			} catch(Throwable e) {
 				e.printStackTrace();
 				throw new RuntimeException(e);
 			}
@@ -193,7 +194,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 		this.getSys(type).put(path, () -> {
 			try {
 				return future.get();
-			} catch (InterruptedException | ExecutionException e) {
+			} catch(InterruptedException | ExecutionException e) {
 				throw new RuntimeException(e);
 			}
 		});
@@ -218,7 +219,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 		this.root.put(path, () -> {
 			try {
 				return future.get();
-			} catch (InterruptedException | ExecutionException e) {
+			} catch(InterruptedException | ExecutionException e) {
 				throw new RuntimeException(e);
 			}
 		});
@@ -261,7 +262,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 		UnsafeByteArrayOutputStream ubaos = new UnsafeByteArrayOutputStream();
 		try {
 			ImageIO.write(image, "png", ubaos);
-		} catch (IOException e) {
+		} catch(IOException e) {
 			throw new RuntimeException("impossible.", e);
 		}
 		return this.addAsset(fix(id, "textures", "png"), ubaos.getBytes());
@@ -291,42 +292,48 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 		});
 	}
 
-	private void lock() {
-		if (!this.waiting.tryLock()) {
-			if (DEBUG_PERFORMANCE) {
-				long start = System.currentTimeMillis();
-				this.waiting.lock();
-				long end = System.currentTimeMillis();
-				LOGGER.warn("waited " + (end - start) + "ms for lock in RRP: " + this.id);
-			} else {
-				this.waiting.lock();
+	@Override
+	public void dumpDirect(Path output) {
+		LOGGER.info("dumping " + this.id + "'s assets and data");
+		// data dump time
+		try {
+			for(Map.Entry<String, Supplier<byte[]>> e : this.root.entrySet()) {
+				Path root = output.resolve(e.getKey());
+				Files.createDirectories(root.getParent());
+				Files.write(root, e.getValue().get());
 			}
+
+			Path assets = output.resolve("assets");
+			Files.createDirectories(assets);
+			for(Map.Entry<Identifier, Supplier<byte[]>> entry : this.assets.entrySet()) {
+				this.write(assets, entry.getKey(), entry.getValue().get());
+			}
+
+			Path data = output.resolve("data");
+			Files.createDirectories(data);
+			for(Map.Entry<Identifier, Supplier<byte[]>> entry : this.data.entrySet()) {
+				this.write(data, entry.getKey(), entry.getValue().get());
+			}
+		} catch(IOException exception) {
+			throw new RuntimeException(exception);
 		}
 	}
 
 	@Override
-	public void dump(Path output) {
-		LOGGER.info("dumping " + this.id + "'s assets and data");
-		// data dump time
-		Path folder = output.resolve(this.id.toString().replace(':', ';') + "/");
-		Path assets = folder.resolve("assets");
-
-		try {
-			Files.createDirectories(assets);
-			for (Map.Entry<Identifier, Supplier<byte[]>> entry : this.assets.entrySet()) {
-				this.write(assets, entry.getKey(), entry.getValue().get());
+	public void load(Path dir) throws IOException {
+		Stream<Path> stream = Files.walk(dir);
+		for(Path file : (Iterable<Path>) () -> stream.filter(Files::isRegularFile).map(dir::relativize).iterator()) {
+			String s = file.toString();
+			if(s.startsWith("assets")) {
+				String path = s.substring("assets".length() + 1);
+				this.load(path, this.assets, Files.readAllBytes(file));
+			} else if(s.startsWith("data")) {
+				String path = s.substring("data".length() + 1);
+				this.load(path, this.data, Files.readAllBytes(file));
+			} else {
+				byte[] data = Files.readAllBytes(file);
+				this.root.put(s, () -> data);
 			}
-
-			Path data = folder.resolve("data");
-
-			if (!Files.exists(data)) {
-				Files.createDirectory(data);
-			}
-			for (Map.Entry<Identifier, Supplier<byte[]>> entry : this.data.entrySet()) {
-				this.write(data, entry.getKey(), entry.getValue().get());
-			}
-		} catch (IOException exception) {
-			throw new RuntimeException(exception);
 		}
 	}
 
@@ -335,36 +342,52 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 		this.dump(Paths.get(output.toURI()));
 	}
 
-	private void write(Path dir, Identifier identifier, byte[] data) {
-		try {
-			Path file = dir.resolve(identifier.getPath());
-			Files.createDirectories(file.getParent());
-			OutputStream output = Files.newOutputStream(file);
-			output.write(data);
-			output.close();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+	@Override
+	public void dump(ZipOutputStream zos) throws IOException {
+		this.lock();
+		for(Map.Entry<String, Supplier<byte[]>> entry : this.root.entrySet()) {
+			zos.putNextEntry(new ZipEntry(entry.getKey()));
+			zos.write(entry.getValue().get());
+			zos.closeEntry();
+		}
+
+		for(Map.Entry<Identifier, Supplier<byte[]>> entry : this.assets.entrySet()) {
+			Identifier id = entry.getKey();
+			zos.putNextEntry(new ZipEntry("assets/" + id.getNamespace() + "/" + id.getPath()));
+			zos.write(entry.getValue().get());
+			zos.closeEntry();
+		}
+
+		for(Map.Entry<Identifier, Supplier<byte[]>> entry : this.data.entrySet()) {
+			Identifier id = entry.getKey();
+			zos.putNextEntry(new ZipEntry("data/" + id.getNamespace() + "/" + id.getPath()));
+			zos.write(entry.getValue().get());
+			zos.closeEntry();
+		}
+		this.waiting.unlock();
+	}
+
+	@Override
+	public void load(ZipInputStream stream) throws IOException {
+		ZipEntry entry;
+		while((entry = stream.getNextEntry()) != null) {
+			String s = entry.toString();
+			if(s.startsWith("assets")) {
+				String path = s.substring("assets".length() + 1);
+				this.load(path, this.assets, this.read(entry, stream));
+			} else if(s.startsWith("data")) {
+				String path = s.substring("data".length() + 1);
+				this.load(path, this.data, this.read(entry, stream));
+			} else {
+				byte[] data = this.read(entry, stream);
+				this.root.put(s, () -> data);
+			}
 		}
 	}
 
-	private static byte[] serialize(Object object) {
-		UnsafeByteArrayOutputStream ubaos = new UnsafeByteArrayOutputStream();
-		OutputStreamWriter writer = new OutputStreamWriter(ubaos);
-		GSON.toJson(object, writer);
-		try {
-			writer.close();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		return ubaos.getBytes();
-	}
-
-	private static Identifier fix(Identifier identifier, String prefix, String append) {
-		return new Identifier(identifier.getNamespace(), prefix + '/' + identifier.getPath() + '.' + append);
-	}
-
-	private Map<Identifier, Supplier<byte[]>> getSys(ResourceType side) {
-		return side == ResourceType.CLIENT_RESOURCES ? this.assets : this.data;
+	@Override
+	public Identifier getId() {
+		return this.id;
 	}
 
 	/**
@@ -375,10 +398,10 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	 */
 	@Override
 	public InputStream openRoot(String fileName) {
-		if (!fileName.contains("/") && !fileName.contains("\\")) {
+		if(!fileName.contains("/") && !fileName.contains("\\")) {
 			this.lock();
 			Supplier<byte[]> supplier = this.root.get(fileName);
-			if (supplier == null) {
+			if(supplier == null) {
 				this.waiting.unlock();
 				return null;
 			}
@@ -393,7 +416,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	public InputStream open(ResourceType type, Identifier id) {
 		this.lock();
 		Supplier<byte[]> supplier = this.getSys(type).get(id);
-		if (supplier == null) {
+		if(supplier == null) {
 			LOGGER.warn("No resource found for " + id);
 			this.waiting.unlock();
 			return null;
@@ -406,8 +429,8 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	public Collection<Identifier> findResources(ResourceType type, String namespace, String prefix, int maxDepth, Predicate<String> pathFilter) {
 		this.lock();
 		Set<Identifier> identifiers = new HashSet<>();
-		for (Identifier identifier : this.getSys(type).keySet()) {
-			if (identifier.getNamespace().equals(namespace) && identifier.getPath().startsWith(prefix) && pathFilter.test(identifier.getPath())) {
+		for(Identifier identifier : this.getSys(type).keySet()) {
+			if(identifier.getNamespace().equals(namespace) && identifier.getPath().startsWith(prefix) && pathFilter.test(identifier.getPath())) {
 				identifiers.add(identifier);
 			}
 		}
@@ -427,7 +450,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	public Set<String> getNamespaces(ResourceType type) {
 		this.lock();
 		Set<String> namespaces = new HashSet<>();
-		for (Identifier identifier : this.getSys(type).keySet()) {
+		for(Identifier identifier : this.getSys(type).keySet()) {
 			namespaces.add(identifier.getNamespace());
 		}
 		this.waiting.unlock();
@@ -437,7 +460,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	// if it works, don't touch it
 	@Override
 	public <T> T parseMetadata(ResourceMetadataReader<T> metaReader) {
-		if (metaReader.getKey().equals("pack")) {
+		if(metaReader.getKey().equals("pack")) {
 			JsonObject object = new JsonObject();
 			object.addProperty("pack_format", this.packVersion);
 			object.addProperty("description", "runtime resource pack");
@@ -458,12 +481,72 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
 		// lock
 		this.lock();
-		if (DUMP) {
+		if(DUMP) {
 			this.dump();
 		}
 
 		// unlock
 		this.waiting.unlock();
+	}
+
+	private static byte[] serialize(Object object) {
+		UnsafeByteArrayOutputStream ubaos = new UnsafeByteArrayOutputStream();
+		OutputStreamWriter writer = new OutputStreamWriter(ubaos);
+		GSON.toJson(object, writer);
+		try {
+			writer.close();
+		} catch(IOException e) {
+			throw new RuntimeException(e);
+		}
+		return ubaos.getBytes();
+	}
+
+	private static Identifier fix(Identifier identifier, String prefix, String append) {
+		return new Identifier(identifier.getNamespace(), prefix + '/' + identifier.getPath() + '.' + append);
+	}
+
+	protected byte[] read(ZipEntry entry, InputStream stream) throws IOException {
+		byte[] data = new byte[Math.toIntExact(entry.getSize())];
+		if(stream.read(data) != data.length) {
+			throw new IOException("Zip stream was cut off! (maybe incorrect zip entry length? maybe u didn't flush your stream?)");
+		}
+		return data;
+	}
+
+	protected void load(String fullPath, Map<Identifier, Supplier<byte[]>> map, byte[] data) {
+		int sep = fullPath.indexOf('/');
+		String namespace = fullPath.substring(0, sep);
+		String path = fullPath.substring(sep + 1);
+		map.put(new Identifier(namespace, path), () -> data);
+	}
+
+	private void lock() {
+		if(!this.waiting.tryLock()) {
+			if(DEBUG_PERFORMANCE) {
+				long start = System.currentTimeMillis();
+				this.waiting.lock();
+				long end = System.currentTimeMillis();
+				LOGGER.warn("waited " + (end - start) + "ms for lock in RRP: " + this.id);
+			} else {
+				this.waiting.lock();
+			}
+		}
+	}
+
+	private void write(Path dir, Identifier identifier, byte[] data) {
+		try {
+			Path file = dir.resolve(identifier.getNamespace()).resolve(identifier.getPath());
+			Files.createDirectories(file.getParent());
+			try(OutputStream output = Files.newOutputStream(file)) {
+				output.write(data);
+			}
+		} catch(IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private Map<Identifier, Supplier<byte[]>> getSys(ResourceType side) {
+		return side == ResourceType.CLIENT_RESOURCES ? this.assets : this.data;
 	}
 
 	private class Memoized<T> implements Supplier<byte[]> {
@@ -478,7 +561,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
 		@Override
 		public byte[] get() {
-			if (this.data == null) {
+			if(this.data == null) {
 				this.data = func.apply(RuntimeResourcePackImpl.this, path);
 			}
 			return this.data;
