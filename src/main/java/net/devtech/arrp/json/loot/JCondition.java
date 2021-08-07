@@ -26,6 +26,9 @@ public class JCondition implements Cloneable {
 			this.condition(condition);
 		}
 	}
+	
+	public JCondition(String condition) {
+	}
 
 	public JCondition condition(String condition) {
 		this.parameters.addProperty("condition", condition);
