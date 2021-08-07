@@ -27,7 +27,7 @@ public class JCondition implements Cloneable {
 		}
 	}
 	
-	public JCondition(String condition) {
+	public JCondition() {
 	}
 
 	public JCondition condition(String condition) {
