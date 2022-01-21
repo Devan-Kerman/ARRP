@@ -6,6 +6,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
 import net.devtech.arrp.api.RRPCallback;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -21,7 +22,7 @@ import net.minecraft.util.Unit;
 
 @Mixin (ReloadableResourceManagerImpl.class)
 public abstract class ReloadableResourceManagerImplMixin {
-	@Shadow @Final private static Logger LOGGER;
+	private static final Logger LOGGER = LogManager.getLogger("ARRP");
 
 	@Inject (method = "beginMonitoredReload",
 			at = @At (value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;"))
