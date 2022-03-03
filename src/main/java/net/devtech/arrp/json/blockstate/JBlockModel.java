@@ -7,6 +7,7 @@ public class JBlockModel implements Cloneable {
 	private Integer x;
 	private Integer y;
 	private Boolean uvlock;
+	private Integer weight;
 
 	@Deprecated
 	public JBlockModel(String model) {
@@ -41,6 +42,11 @@ public class JBlockModel implements Cloneable {
 
 	public JBlockModel uvlock() {
 		this.uvlock = true;
+		return this;
+	}
+
+	public JBlockModel weight(int weight) {
+		this.weight = weight;
 		return this;
 	}
 
