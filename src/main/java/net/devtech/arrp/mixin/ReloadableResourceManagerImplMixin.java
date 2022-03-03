@@ -3,8 +3,10 @@ package net.devtech.arrp.mixin;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 
+import net.devtech.arrp.ARRP;
 import net.devtech.arrp.api.RRPCallback;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,7 +27,9 @@ public abstract class ReloadableResourceManagerImplMixin {
 	private List<ResourcePack> registerARRPs(List<ResourcePack> packs, Executor prepareExecutor,
 			Executor applyExecutor,
 			CompletableFuture<Unit> initialStage,
-			List<ResourcePack> packs0) {
+			List<ResourcePack> packs0) throws ExecutionException, InterruptedException {
+		ARRP.waitForPregen();
+
 		ARRP_LOGGER.info("ARRP register - before vanilla");
 		List<ResourcePack> before = new ArrayList<>();
 		RRPCallback.BEFORE_VANILLA.invoker().insert(before);
@@ -37,6 +41,7 @@ public abstract class ReloadableResourceManagerImplMixin {
 		RRPCallback.AFTER_VANILLA.invoker().insert(after);
 
 		before.addAll(after);
+
 
 		return before;
 	}
