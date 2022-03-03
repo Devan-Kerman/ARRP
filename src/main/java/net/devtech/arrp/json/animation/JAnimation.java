@@ -40,7 +40,7 @@ public class JAnimation implements Cloneable {
 	}
 
 	public JAnimation interpolate() {
-		this.interpolate = false;
+		this.interpolate = true;
 		return this;
 	}
 
