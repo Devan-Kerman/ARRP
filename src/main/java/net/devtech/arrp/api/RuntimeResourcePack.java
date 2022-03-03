@@ -49,6 +49,14 @@ public interface RuntimeResourcePack extends ResourcePack {
 		return new RuntimeResourcePackImpl(new Identifier(id), version);
 	}
 
+	static RuntimeResourcePack create(Identifier id) {
+		return new RuntimeResourcePackImpl(id);
+	}
+
+	static RuntimeResourcePack create(Identifier id, int version) {
+		return new RuntimeResourcePackImpl(id, version);
+	}
+
 	static Identifier id(String string) {return new Identifier(string);}
 
 	static Identifier id(String namespace, String string) {return new Identifier(namespace, string);}
@@ -74,6 +82,11 @@ public interface RuntimeResourcePack extends ResourcePack {
 	 * ex. addLang(MyMod.id("en_us"), lang().translate("something.something", "test"))
 	 */
 	byte[] addLang(Identifier identifier, JLang lang);
+
+	/**
+	 * Multiple calls to this method with the same identifier will merge them into one lang file
+	 */
+	void mergeLang(Identifier identifier, JLang lang);
 
 	/**
 	 * adds a loot table

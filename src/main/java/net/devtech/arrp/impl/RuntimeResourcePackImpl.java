@@ -142,6 +142,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	private final Map<Identifier, Supplier<byte[]>> data = new ConcurrentHashMap<>();
 	private final Map<Identifier, Supplier<byte[]>> assets = new ConcurrentHashMap<>();
 	private final Map<String, Supplier<byte[]>> root = new ConcurrentHashMap<>();
+	private final Map<Identifier, JLang> langMergable = new ConcurrentHashMap<>();
 
 	public RuntimeResourcePackImpl(Identifier id) {
 		this(id, 5);
@@ -181,6 +182,20 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	@Override
 	public byte[] addLang(Identifier identifier, JLang lang) {
 		return this.addAsset(fix(identifier, "lang", "json"), serialize(lang.getLang()));
+	}
+
+	@Override
+	public void mergeLang(Identifier identifier, JLang lang) {
+		this.langMergable.compute(identifier, (identifier1, lang1) -> {
+			if(lang1 == null) {
+				lang1 = new JLang();
+				this.addLazyResource(ResourceType.CLIENT_RESOURCES, identifier, (pack, identifier2) -> {
+					return pack.addLang(identifier, lang);
+				});
+			}
+			lang1.getLang().putAll(lang.getLang());
+			return lang1;
+		});
 	}
 
 	@Override

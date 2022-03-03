@@ -2,11 +2,11 @@ package net.devtech.arrp;
 
 import net.devtech.arrp.api.RRPPreGenEntrypoint;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class ARRP implements PreLaunchEntrypoint {
 	private static final Logger LOGGER = LogManager.getLogger("ARRP");
