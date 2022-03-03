@@ -44,13 +44,15 @@ public class JWhen implements Cloneable {
 				json.addProperty(val.getLeft(), String.join("|", Arrays.asList(val.getRight())));
 				return json;
 			} else {
+				JsonObject or = new JsonObject();
 				JsonArray array = new JsonArray();
 				for (Pair<String, String[]> val : src.OR) {
 					JsonObject json = new JsonObject();
 					json.addProperty(val.getLeft(), String.join("|", Arrays.asList(val.getRight())));
 					array.add(json);
 				}
-				return array;
+				or.add("OR", array);
+				return or;
 			}
 		}
 	}
