@@ -23,7 +23,7 @@ repositories {
 }
 
 dependencies {
-    modImplementation("net.devtech:arrp:0.5.5")
+    modImplementation("net.devtech:arrp:0.5.7")
     // I never break backwards compatibility, so just fetching the latest version should be fine
     // modImplementation("net.devtech:arrp:0.+")
 }
