@@ -75,7 +75,7 @@ public final class JVariant implements Cloneable {
 		@Override
 		public JsonElement serialize(JVariant src, Type typeOfSrc, JsonSerializationContext context) {
 			JsonObject object = new JsonObject();
-			src.models.forEach((s, m) -> object.add(s, context.serialize(m)));
+			src.models.forEach((s, m) -> object.add(s, context.serialize(m.size() == 1 ? m.get(0) : m)));
 			return object;
 		}
 	}
