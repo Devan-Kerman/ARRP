@@ -10,6 +10,11 @@ public class JFrame implements Cloneable {
 	 */
 	public JFrame(int index) {this.index = index;}
 
+	public JFrame time(int time) {
+		this.time = time;
+		return this;
+	}
+
 	@Override
 	public JFrame clone() {
 		try {

@@ -3,7 +3,7 @@
   "package": "net.devtech.arrp.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "ReloadableResourceManagerImplMixin"
+    "LifecycledResourceManagerImplMixin"
   ],
   "injectors": {
     "defaultRequire": 1
