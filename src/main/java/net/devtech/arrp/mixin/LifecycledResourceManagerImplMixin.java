@@ -1,5 +1,6 @@
 package net.devtech.arrp.mixin;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -20,18 +21,19 @@ import net.minecraft.resource.LifecycledResourceManagerImpl;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 
-@Mixin (LifecycledResourceManagerImpl.class)
+@Mixin(LifecycledResourceManagerImpl.class)
 public abstract class LifecycledResourceManagerImplMixin {
 	private static final Logger ARRP_LOGGER = LogManager.getLogger("ARRP/ReloadableResourceManagerImplMixin");
-
-	@Inject(method = "<init>",
-			at = @At (value = "HEAD"))
-	private static void registerARRPs(ResourceType type, List<ResourcePack> packs, CallbackInfo ci) throws ExecutionException, InterruptedException {
+	
+	@ModifyVariable(method = "<init>", at = @At("HEAD"), argsOnly = true)
+	private static List<ResourcePack> registerARRPs(List<ResourcePack> packs, ResourceType type, List<ResourcePack> packs0) throws ExecutionException, InterruptedException {
+		List<ResourcePack> copy = new ArrayList<>(packs);
 		ARRP.waitForPregen();
 		ARRP_LOGGER.info("ARRP register - before vanilla");
-		SidedRRPCallback.BEFORE_VANILLA.invoker().insert(type, Lists.reverse(packs));
-
+		SidedRRPCallback.BEFORE_VANILLA.invoker().insert(type, Lists.reverse(copy));
+		
 		ARRP_LOGGER.info("ARRP register - after vanilla");
-		SidedRRPCallback.AFTER_VANILLA.invoker().insert(type, packs);
+		SidedRRPCallback.AFTER_VANILLA.invoker().insert(type, copy);
+		return copy;
 	}
 }
