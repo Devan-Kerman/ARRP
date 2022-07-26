@@ -199,8 +199,9 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 		this.langMergable.compute(identifier, (identifier1, lang1) -> {
 			if(lang1 == null) {
 				lang1 = new JLang();
+				JLang finalLang = lang1;
 				this.addLazyResource(ResourceType.CLIENT_RESOURCES, identifier, (pack, identifier2) -> {
-					return pack.addLang(identifier, lang);
+					return pack.addLang(identifier, finalLang);
 				});
 			}
 			lang1.getLang().putAll(lang.getLang());
