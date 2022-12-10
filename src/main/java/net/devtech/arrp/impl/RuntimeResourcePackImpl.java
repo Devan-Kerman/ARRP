@@ -487,7 +487,10 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	public <T> T parseMetadata(ResourceMetadataReader<T> metaReader) {
 		InputStream stream = null;
 		try {
-			stream = this.openRoot("pack.mcmeta").get();
+			InputSupplier<InputStream> supplier = this.openRoot("pack.mcmeta");
+			if (supplier != null) {
+				stream = supplier.get();
+			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
