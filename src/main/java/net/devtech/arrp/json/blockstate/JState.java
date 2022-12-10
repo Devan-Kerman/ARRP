@@ -88,6 +88,10 @@ public final class JState {
 	public static JWhen when() {
 		return new JWhen();
 	}
+	
+	public static JWhen.StateBuilder whenStateBuilder() {
+		return new JWhen.StateBuilder();
+	}
 
 	@Override
 	public JState clone() {

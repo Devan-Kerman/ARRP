@@ -32,7 +32,7 @@ public class JMultipart implements Cloneable {
 		this.when = when;
 		return this;
 	}
-
+	
 	public JMultipart addModel(JBlockModel model) {
 		this.apply.add(model);
 		return this;
