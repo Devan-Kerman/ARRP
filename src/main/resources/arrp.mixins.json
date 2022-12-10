@@ -4,8 +4,7 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "FileResourcePackProviderMixin",
-    "LifecycledResourceManagerImplMixin",
-    "ResourcePackManagerMixin"
+    "LifecycledResourceManagerImplMixin"
   ],
   "injectors": {
     "defaultRequire": 1
