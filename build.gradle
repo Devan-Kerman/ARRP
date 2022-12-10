@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.11-SNAPSHOT'
+    id 'fabric-loom' version '1.0-SNAPSHOT'
     id 'maven-publish'
     id "me.shedaniel.unified-publishing" version "0.1.+"
 }
@@ -72,7 +72,7 @@ if(file.exists()) {
 
     unifiedPublishing {
         project {
-            gameVersions = ["1.19"]
+            gameVersions = ["1.19.3"]
             gameLoaders = ["fabric"]
 
             mainPublication tasks.remapJar // Declares the publicated jar
