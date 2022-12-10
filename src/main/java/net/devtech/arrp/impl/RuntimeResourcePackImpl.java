@@ -66,6 +66,7 @@ import net.devtech.arrp.json.tags.JTag;
 import net.devtech.arrp.util.CallableFunction;
 import net.devtech.arrp.util.CountingInputStream;
 import net.devtech.arrp.util.UnsafeByteArrayOutputStream;
+import net.minecraft.resource.InputSupplier;
 import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -74,6 +75,7 @@ import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 
 
 /**
@@ -418,12 +420,13 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	/**
 	 * pack.png and that's about it I think/hope
 	 *
-	 * @param fileName the name of the file, can't be a path tho
+	 * @param segments the name of the file, can't be a path tho
 	 * @return the pack.png image as a stream
 	 */
 	@Override
-	public InputStream openRoot(String fileName) {
-		if(!fileName.contains("/") && !fileName.contains("\\")) {
+	public InputSupplier<InputStream> openRoot(String... segments) {
+		if(segments.length == 1) {
+			String fileName = segments[0];
 			this.lock();
 			Supplier<byte[]> supplier = this.root.get(fileName);
 			if(supplier == null) {
@@ -431,14 +434,14 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 				return null;
 			}
 			this.waiting.unlock();
-			return new ByteArrayInputStream(supplier.get());
+			return () -> new ByteArrayInputStream(supplier.get());
 		} else {
 			throw new IllegalArgumentException("File name can't be a path");
 		}
 	}
-	
+
 	@Override
-	public InputStream open(ResourceType type, Identifier id) {
+	public InputSupplier<InputStream> open(ResourceType type, Identifier id) {
 		this.lock();
 		Supplier<byte[]> supplier = this.getSys(type).get(id);
 		if(supplier == null) {
@@ -447,31 +450,28 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 			return null;
 		}
 		this.waiting.unlock();
-		return new ByteArrayInputStream(supplier.get());
+		return () -> new ByteArrayInputStream(supplier.get());
 	}
-	
+
 	@Override
-	public Collection<Identifier> findResources(
-			ResourceType type, String namespace, String prefix, Predicate<Identifier> allowedPathPredicate) {
+	public void findResources(
+			ResourceType type, String namespace, String prefix, ResultConsumer consumer) {
 		this.lock();
-		Set<Identifier> identifiers = new HashSet<>();
 		for(Identifier identifier : this.getSys(type).keySet()) {
-			if(identifier.getNamespace().equals(namespace) && identifier.getPath().startsWith(prefix) && allowedPathPredicate.test(identifier)) {
-				identifiers.add(identifier);
+			Supplier<byte[]> supplier = this.getSys(type).get(identifier);
+			if(supplier == null) {
+				LOGGER.warn("No resource found for " + identifier);
+				this.waiting.unlock();
+				continue;
+			}
+			InputSupplier<InputStream> inputSupplier = () -> new ByteArrayInputStream(supplier.get());
+			if(identifier.getNamespace().equals(namespace) && identifier.getPath().startsWith(prefix)) {
+				consumer.accept(identifier, inputSupplier);
 			}
 		}
 		this.waiting.unlock();
-		return identifiers;
 	}
-	
-	@Override
-	public boolean contains(ResourceType type, Identifier id) {
-		this.lock();
-		boolean contains = this.getSys(type).containsKey(id);
-		this.waiting.unlock();
-		return contains;
-	}
-	
+
 	@Override
 	public Set<String> getNamespaces(ResourceType type) {
 		this.lock();
@@ -485,7 +485,12 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	
 	@Override
 	public <T> T parseMetadata(ResourceMetadataReader<T> metaReader) {
-		InputStream stream = this.openRoot("pack.mcmeta");
+		InputStream stream = null;
+		try {
+			stream = this.openRoot("pack.mcmeta").get();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 		if(stream != null) {
 			return AbstractFileResourcePack.parseMetadata(metaReader, stream);
 		} else {

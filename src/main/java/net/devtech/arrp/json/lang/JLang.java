@@ -7,8 +7,9 @@ import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -76,7 +77,7 @@ public class JLang implements Cloneable {
      */
     @Deprecated
     public JLang item(Item item, String name) {
-        return this.object(Registry.ITEM, "item", item, name);
+        return this.object(Registries.ITEM, "item", item, name);
     }
 
     /**
@@ -92,11 +93,11 @@ public class JLang implements Cloneable {
      */
     @Deprecated
     public JLang block(Block block, String name) {
-        return this.object(Registry.BLOCK, "block", block, name);
+        return this.object(Registries.BLOCK, "block", block, name);
     }
 
     public JLang fluid(Fluid fluid, String name) {
-        return this.object(Registry.FLUID, "fluid", fluid, name);
+        return this.object(Registries.FLUID, "fluid", fluid, name);
     }
 
     /**
@@ -112,7 +113,7 @@ public class JLang implements Cloneable {
      */
     @Deprecated
     public JLang entity(EntityType<?> type, String name) {
-        return this.object(Registry.ENTITY_TYPE, "entity_type", type, name);
+        return this.object(Registries.ENTITY_TYPE, "entity_type", type, name);
     }
 
     /**
@@ -128,7 +129,7 @@ public class JLang implements Cloneable {
      */
     @Deprecated
     public JLang enchantment(Enchantment enchantment, String name) {
-        return this.object(Registry.ENCHANTMENT, "enchantment", enchantment, name);
+        return this.object(Registries.ENCHANTMENT, "enchantment", enchantment, name);
     }
 
     public JLang item(Identifier item, String name) {
