@@ -21,7 +21,7 @@ public class JModel implements Cloneable {
 	// texture variables
 	private JTextures textures;
 	// make serializer
-	private List<JElement> elements = new ArrayList<>();
+	private List<JElement> elements;
 	private List<JOverride> overrides;
 
 	/**

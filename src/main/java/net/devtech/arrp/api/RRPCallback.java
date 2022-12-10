@@ -1,6 +1,7 @@
 package net.devtech.arrp.api;
 
 import java.util.List;
+import java.util.function.Function;
 
 import net.devtech.arrp.util.IrremovableList;
 
@@ -10,25 +11,27 @@ import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 
 public interface RRPCallback {
-	/**
-	 * Register your resource pack at a higher priority than minecraft and mod resources
-	 */
-	Event<RRPCallback> BEFORE_VANILLA = EventFactory.createArrayBacked(RRPCallback.class, r -> rs -> {
+	Function<RRPCallback[], RRPCallback> CALLBACK_FUNCTION = r -> rs -> {
 		IrremovableList<ResourcePack> packs = new IrremovableList<>(rs, $ -> {});
 		for (RRPCallback callback : r) {
 			callback.insert(packs);
 		}
-	});
+	};
 
 	/**
 	 * Register your resource pack at a lower priority than minecraft and mod resources
 	 */
-	Event<RRPCallback> AFTER_VANILLA = EventFactory.createArrayBacked(RRPCallback.class, r -> rs -> {
-		IrremovableList<ResourcePack> packs = new IrremovableList<>(rs, $ -> {});
-		for (RRPCallback callback : r) {
-			callback.insert(packs);
-		}
-	});
+	Event<RRPCallback> BEFORE_VANILLA = EventFactory.createArrayBacked(RRPCallback.class, CALLBACK_FUNCTION);
+
+	/**
+	 * Register your resource pack at a higher priority than minecraft and mod resources, but lower priority than user resources.
+	 */
+	Event<RRPCallback> BEFORE_USER = EventFactory.createArrayBacked(RRPCallback.class, CALLBACK_FUNCTION);
+
+	/**
+	 * Register your resource pack at a higher priority than minecraft and mod resources
+	 */
+	Event<RRPCallback> AFTER_VANILLA = EventFactory.createArrayBacked(RRPCallback.class, CALLBACK_FUNCTION);
 
 	/**
 	 * @deprecated unintuitive name
