@@ -15,12 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -153,7 +148,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	private final Lock waiting = new ReentrantLock();
 	private final Map<Identifier, Supplier<byte[]>> data = new ConcurrentHashMap<>();
 	private final Map<Identifier, Supplier<byte[]>> assets = new ConcurrentHashMap<>();
-	private final Map<String, Supplier<byte[]>> root = new ConcurrentHashMap<>();
+	private final Map<List<String>, Supplier<byte[]>> root = new ConcurrentHashMap<>();
 	private final Map<Identifier, JLang> langMergable = new ConcurrentHashMap<>();
 	
 	public RuntimeResourcePackImpl(Identifier id) {
@@ -243,7 +238,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	@Override
 	public Future<byte[]> addAsyncRootResource(String path, CallableFunction<String, byte[]> data) {
 		Future<byte[]> future = EXECUTOR_SERVICE.submit(() -> data.get(path));
-		this.root.put(path, () -> {
+		this.root.put(Arrays.asList(path.split("/")), () -> {
 			try {
 				return future.get();
 			} catch(InterruptedException | ExecutionException e) {
@@ -255,12 +250,12 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	
 	@Override
 	public void addLazyRootResource(String path, BiFunction<RuntimeResourcePack, String, byte[]> data) {
-		this.root.put(path, new Memoized<>(data, path));
+		this.root.put(Arrays.asList(path.split("/")), new Memoized<>(data, path));
 	}
 	
 	@Override
 	public byte[] addRootResource(String path, byte[] data) {
-		this.root.put(path, () -> data);
+		this.root.put(Arrays.asList(path.split("/")), () -> data);
 		return data;
 	}
 	
@@ -324,8 +319,8 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 		LOGGER.info("dumping " + this.id + "'s assets and data");
 		// data dump time
 		try {
-			for(Map.Entry<String, Supplier<byte[]>> e : this.root.entrySet()) {
-				Path root = output.resolve(e.getKey());
+			for(Map.Entry<List<String>, Supplier<byte[]>> e : this.root.entrySet()) {
+				Path root = output.resolve(String.join("/", e.getKey()));
 				Files.createDirectories(root.getParent());
 				Files.write(root, e.getValue().get());
 			}
@@ -359,7 +354,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 				this.load(path, this.data, Files.readAllBytes(file));
 			} else {
 				byte[] data = Files.readAllBytes(file);
-				this.root.put(s, () -> data);
+				this.root.put(Arrays.asList(s.split("/")), () -> data);
 			}
 		}
 	}
@@ -372,8 +367,8 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	@Override
 	public void dump(ZipOutputStream zos) throws IOException {
 		this.lock();
-		for(Map.Entry<String, Supplier<byte[]>> entry : this.root.entrySet()) {
-			zos.putNextEntry(new ZipEntry(entry.getKey()));
+		for(Map.Entry<List<String>, Supplier<byte[]>> entry : this.root.entrySet()) {
+			zos.putNextEntry(new ZipEntry(String.join("/", entry.getKey())));
 			zos.write(entry.getValue().get());
 			zos.closeEntry();
 		}
@@ -407,7 +402,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 				this.load(path, this.data, this.read(entry, stream));
 			} else {
 				byte[] data = this.read(entry, stream);
-				this.root.put(s, () -> data);
+				this.root.put(Arrays.asList(s.split("/")), () -> data);
 			}
 		}
 	}
@@ -425,19 +420,14 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	 */
 	@Override
 	public InputSupplier<InputStream> openRoot(String... segments) {
-		if(segments.length == 1) {
-			String fileName = segments[0];
-			this.lock();
-			Supplier<byte[]> supplier = this.root.get(fileName);
-			if(supplier == null) {
-				this.waiting.unlock();
-				return null;
-			}
+		this.lock();
+		Supplier<byte[]> supplier = this.root.get(Arrays.asList(segments));
+		if(supplier == null) {
 			this.waiting.unlock();
-			return () -> new ByteArrayInputStream(supplier.get());
-		} else {
-			throw new IllegalArgumentException("File name can't be a path");
+			return null;
 		}
+		this.waiting.unlock();
+		return () -> new ByteArrayInputStream(supplier.get());
 	}
 
 	@Override
