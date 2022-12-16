@@ -1,17 +1,17 @@
 pluginManagement {
     repositories {
-        jcenter()
         maven {
-            name = 'Fabric'
-            url = 'https://maven.fabricmc.net/'
+            name = "FabricMC"
+            url = uri("https://maven.fabricmc.net/")
         }
+
         maven {
             name = 'Architectury'
-            url "https://maven.architectury.dev/"
+            url = uri("https://maven.architectury.dev/")
         }
+
         gradlePluginPortal()
     }
 }
+
 rootProject.name = 'arrp'
-
-

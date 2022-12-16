@@ -1,96 +1,94 @@
 plugins {
-    id 'fabric-loom' version '1.0-SNAPSHOT'
-    id 'maven-publish'
-    id "me.shedaniel.unified-publishing" version "0.1.+"
+    id("fabric-loom") version "1.0-SNAPSHOT"
+    id("me.shedaniel.unified-publishing") version "0.1.+"
+    id("maven-publish")
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
-
-archivesBaseName = project.archives_base_name
-version = project.mod_version
-group = project.maven_group
+group = "net.devtech"
+version = System.getenv("ARRP_VERSION") ?: "0.0.0"
 
 dependencies {
-    minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    modImplementation include(fabricApi.module('fabric-api-base', project.fabric_version))
+    minecraft("com.mojang:minecraft:${minecraft_version}")
+    mappings("net.fabricmc:yarn:${yarn_mappings}:v2")
+    modImplementation("net.fabricmc:fabric-loader:${loader_version}")
+    modImplementation(include(fabricApi.module("fabric-api-base", fabric_version)))
 }
 
-processResources {
-    inputs.property "version", project.version
-
-    filesMatching("fabric.mod.json") {
-        expand "version": project.version
-    }
-}
-
-
-tasks.withType(JavaCompile).configureEach {
-    it.options.release = 17
+base {
+    archivesName.set("arrp")
 }
 
 java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+
     withSourcesJar()
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+processResources {
+    inputs.property("version", project.version)
+
+    filesMatching("fabric.mod.json") {
+        expand("version": project.version)
+    }
 }
 
 jar {
     from("LICENSE") {
-        rename { "${it}_${project.archivesBaseName}"}
+        rename { "${it}_${base.archivesName.get()}"}
     }
 }
-
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            from components.java
+            from(components.java)
         }
     }
 
     repositories {
         maven {
-            def mavenUrl = project.hasProperty('maven_url') ? project.property('maven_url') : ""
-            url mavenUrl
-            if (mavenUrl.startsWith("http")) {
-                credentials {
-                    username project.hasProperty('maven_username') ? project.property('maven_username') : ""
-                    password project.hasProperty('maven_password') ? project.property('maven_password') : ""
-                }
+            name = "Project"
+            url = uri("${buildDir}/repo")
+        }
+
+        maven {
+            credentials {
+                username = ""
+                password = System.getenv("MODMAVEN")
             }
+
+            name = "Modmaven"
+            url = "https://modmaven.dev/artifactory/local-releases/"
         }
     }
 }
 
-File file = file("tokens.properties")
-if(file.exists()) {
-    Properties properties = new Properties()
-    try (InputStream stream = new FileInputStream(file)) {
-        properties.load(stream)
-    }
+unifiedPublishing {
+    project {
+        gameVersions.add(minecraft_version)
+        gameVersions.add("fabric")
 
-    unifiedPublishing {
-        project {
-            gameVersions = ["1.19.3"]
-            gameLoaders = ["fabric"]
+        changelog.set("View changelog at [the release page](https://github.com/Devan-Kerman/ARRP/releases/tag/${version})")
 
-            mainPublication tasks.remapJar // Declares the publicated jar
+        mainPublication(tasks.remapJar)
 
-            var cfToken = properties.getProperty("cf_token")
-            if (cfToken != null) {
-                curseforge {
-                    token = cfToken
-                    id = "463113" // Required, must be a string, ID of CurseForge project
-                }
+        System.getenv("CURSEFORGE")?.with { String key ->
+            curseforge {
+                token.set(key)
+                id.set("463113")
             }
+        }
 
-            var mrToken = properties.getProperty("mr_token")
-            if (mrToken != null) {
-                modrinth {
-                    token = mrToken
-                    id = "USLVyT7V" // Required, must be a string, ID of Modrinth project
-                }
+        System.getenv("MODRINTH")?.with { String key ->
+            modrinth {
+                token.set(key)
+                id.set("USLVyT7V")
             }
         }
     }

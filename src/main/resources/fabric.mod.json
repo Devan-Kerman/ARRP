@@ -3,11 +3,13 @@
   "id": "advanced_runtime_resource_pack",
   "version": "${version}",
   "name": "Runtime Resource Pack",
-  "description": "a mod that allows mods to generate assets/data on the fly",
+  "description": "A mod that allows mods to generate assets/data on the fly",
   "authors": [
     "HalfOf2"
   ],
   "contact": {
+    "homepage": "https://github.com/Devan-Kerman/RRP#readme",
+    "issues": "https://github.com/Devan-Kerman/RRP/issues",
     "sources": "https://github.com/Devan-Kerman/RRP"
   },
   "license": "MPLv2",
