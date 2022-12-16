@@ -1,6 +1,5 @@
 package test;
 
-import static jdk.nashorn.internal.runtime.Debug.id;
 import static net.devtech.arrp.json.blockstate.JState.multipart;
 import static net.devtech.arrp.json.blockstate.JState.state;
 import static net.devtech.arrp.json.blockstate.JState.variant;

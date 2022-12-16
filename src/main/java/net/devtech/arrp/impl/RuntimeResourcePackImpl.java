@@ -1,45 +1,5 @@
 package net.devtech.arrp.impl;
 
-import static java.lang.String.valueOf;
-
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.IntUnaryOperator;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
-
-import javax.imageio.ImageIO;
-
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -57,23 +17,41 @@ import net.devtech.arrp.json.loot.JLootTable;
 import net.devtech.arrp.json.loot.JPool;
 import net.devtech.arrp.json.models.JModel;
 import net.devtech.arrp.json.models.JTextures;
-import net.devtech.arrp.json.recipe.JIngredient;
-import net.devtech.arrp.json.recipe.JIngredients;
-import net.devtech.arrp.json.recipe.JKeys;
-import net.devtech.arrp.json.recipe.JPattern;
-import net.devtech.arrp.json.recipe.JRecipe;
+import net.devtech.arrp.json.recipe.*;
 import net.devtech.arrp.json.tags.JTag;
 import net.devtech.arrp.util.CallableFunction;
 import net.devtech.arrp.util.CountingInputStream;
 import net.devtech.arrp.util.UnsafeByteArrayOutputStream;
-import org.apache.logging.log4j.LogManager;
-import org.jetbrains.annotations.ApiStatus;
-
 import net.minecraft.resource.AbstractFileResourcePack;
+import net.minecraft.resource.InputSupplier;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
 import net.minecraft.util.Identifier;
+import org.apache.logging.log4j.LogManager;
+import org.jetbrains.annotations.ApiStatus;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.IntUnaryOperator;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
+
+import static java.lang.String.valueOf;
 
 
 /**
@@ -151,7 +129,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	private final Lock waiting = new ReentrantLock();
 	private final Map<Identifier, Supplier<byte[]>> data = new ConcurrentHashMap<>();
 	private final Map<Identifier, Supplier<byte[]>> assets = new ConcurrentHashMap<>();
-	private final Map<String, Supplier<byte[]>> root = new ConcurrentHashMap<>();
+	private final Map<List<String>, Supplier<byte[]>> root = new ConcurrentHashMap<>();
 	private final Map<Identifier, JLang> langMergable = new ConcurrentHashMap<>();
 	
 	public RuntimeResourcePackImpl(Identifier id) {
@@ -241,7 +219,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	@Override
 	public Future<byte[]> addAsyncRootResource(String path, CallableFunction<String, byte[]> data) {
 		Future<byte[]> future = EXECUTOR_SERVICE.submit(() -> data.get(path));
-		this.root.put(path, () -> {
+		this.root.put(Arrays.asList(path.split("/")), () -> {
 			try {
 				return future.get();
 			} catch(InterruptedException | ExecutionException e) {
@@ -253,12 +231,12 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	
 	@Override
 	public void addLazyRootResource(String path, BiFunction<RuntimeResourcePack, String, byte[]> data) {
-		this.root.put(path, new Memoized<>(data, path));
+		this.root.put(Arrays.asList(path.split("/")), new Memoized<>(data, path));
 	}
 	
 	@Override
 	public byte[] addRootResource(String path, byte[] data) {
-		this.root.put(path, () -> data);
+		this.root.put(Arrays.asList(path.split("/")), () -> data);
 		return data;
 	}
 	
@@ -322,8 +300,8 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 		LOGGER.info("dumping " + this.id + "'s assets and data");
 		// data dump time
 		try {
-			for(Map.Entry<String, Supplier<byte[]>> e : this.root.entrySet()) {
-				Path root = output.resolve(e.getKey());
+			for(Map.Entry<List<String>, Supplier<byte[]>> e : this.root.entrySet()) {
+				Path root = output.resolve(String.join("/", e.getKey()));
 				Files.createDirectories(root.getParent());
 				Files.write(root, e.getValue().get());
 			}
@@ -357,7 +335,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 				this.load(path, this.data, Files.readAllBytes(file));
 			} else {
 				byte[] data = Files.readAllBytes(file);
-				this.root.put(s, () -> data);
+				this.root.put(Arrays.asList(s.split("/")), () -> data);
 			}
 		}
 	}
@@ -370,8 +348,8 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	@Override
 	public void dump(ZipOutputStream zos) throws IOException {
 		this.lock();
-		for(Map.Entry<String, Supplier<byte[]>> entry : this.root.entrySet()) {
-			zos.putNextEntry(new ZipEntry(entry.getKey()));
+		for(Map.Entry<List<String>, Supplier<byte[]>> entry : this.root.entrySet()) {
+			zos.putNextEntry(new ZipEntry(String.join("/", entry.getKey())));
 			zos.write(entry.getValue().get());
 			zos.closeEntry();
 		}
@@ -405,7 +383,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 				this.load(path, this.data, this.read(entry, stream));
 			} else {
 				byte[] data = this.read(entry, stream);
-				this.root.put(s, () -> data);
+				this.root.put(Arrays.asList(s.split("/")), () -> data);
 			}
 		}
 	}
@@ -418,27 +396,23 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	/**
 	 * pack.png and that's about it I think/hope
 	 *
-	 * @param fileName the name of the file, can't be a path tho
+	 * @param segments the name of the file, can't be a path tho
 	 * @return the pack.png image as a stream
 	 */
 	@Override
-	public InputStream openRoot(String fileName) {
-		if(!fileName.contains("/") && !fileName.contains("\\")) {
-			this.lock();
-			Supplier<byte[]> supplier = this.root.get(fileName);
-			if(supplier == null) {
-				this.waiting.unlock();
-				return null;
-			}
+	public InputSupplier<InputStream> openRoot(String... segments) {
+		this.lock();
+		Supplier<byte[]> supplier = this.root.get(Arrays.asList(segments));
+		if(supplier == null) {
 			this.waiting.unlock();
-			return new ByteArrayInputStream(supplier.get());
-		} else {
-			throw new IllegalArgumentException("File name can't be a path");
+			return null;
 		}
+		this.waiting.unlock();
+		return () -> new ByteArrayInputStream(supplier.get());
 	}
-	
+
 	@Override
-	public InputStream open(ResourceType type, Identifier id) {
+	public InputSupplier<InputStream> open(ResourceType type, Identifier id) {
 		this.lock();
 		Supplier<byte[]> supplier = this.getSys(type).get(id);
 		if(supplier == null) {
@@ -447,31 +421,28 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 			return null;
 		}
 		this.waiting.unlock();
-		return new ByteArrayInputStream(supplier.get());
+		return () -> new ByteArrayInputStream(supplier.get());
 	}
-	
+
 	@Override
-	public Collection<Identifier> findResources(
-			ResourceType type, String namespace, String prefix, Predicate<Identifier> allowedPathPredicate) {
+	public void findResources(
+			ResourceType type, String namespace, String prefix, ResultConsumer consumer) {
 		this.lock();
-		Set<Identifier> identifiers = new HashSet<>();
 		for(Identifier identifier : this.getSys(type).keySet()) {
-			if(identifier.getNamespace().equals(namespace) && identifier.getPath().startsWith(prefix) && allowedPathPredicate.test(identifier)) {
-				identifiers.add(identifier);
+			Supplier<byte[]> supplier = this.getSys(type).get(identifier);
+			if(supplier == null) {
+				LOGGER.warn("No resource found for " + identifier);
+				this.waiting.unlock();
+				continue;
+			}
+			InputSupplier<InputStream> inputSupplier = () -> new ByteArrayInputStream(supplier.get());
+			if(identifier.getNamespace().equals(namespace) && identifier.getPath().startsWith(prefix)) {
+				consumer.accept(identifier, inputSupplier);
 			}
 		}
 		this.waiting.unlock();
-		return identifiers;
 	}
-	
-	@Override
-	public boolean contains(ResourceType type, Identifier id) {
-		this.lock();
-		boolean contains = this.getSys(type).containsKey(id);
-		this.waiting.unlock();
-		return contains;
-	}
-	
+
 	@Override
 	public Set<String> getNamespaces(ResourceType type) {
 		this.lock();
@@ -485,7 +456,15 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	
 	@Override
 	public <T> T parseMetadata(ResourceMetadataReader<T> metaReader) {
-		InputStream stream = this.openRoot("pack.mcmeta");
+		InputStream stream = null;
+		try {
+			InputSupplier<InputStream> supplier = this.openRoot("pack.mcmeta");
+			if (supplier != null) {
+				stream = supplier.get();
+			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 		if(stream != null) {
 			return AbstractFileResourcePack.parseMetadata(metaReader, stream);
 		} else {
