@@ -17,7 +17,10 @@ jobs:
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@v1
       - name: Set up JDK 17
-        run: sudo apt install -y openjdk-17-jdk
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
       - name: Build
         run: ./gradlew build
         env:
