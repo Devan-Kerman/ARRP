@@ -16,7 +16,7 @@ Gradle:
 // should work for both groovy and kotlin DSL
 repositories {
 	maven {
-		url = uri("https://maven.ueaj.dev")
+		url = uri("https://ueaj.dev/maven")
 		// for 0.4.2 and older
 		// url uri("https://raw.githubusercontent.com/Devan-Kerman/Devan-Repo/master/")
 	}
