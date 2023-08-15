@@ -38,7 +38,11 @@ public abstract class LifecycledResourceManagerImplMixin {
 
 		if (optionalInt.isPresent()) {
 			ARRP_LOGGER.info("ARRP register - between vanilla and mods");
+			int initialCopyLength = copy.size();
 			SidedRRPCallback.BETWEEN_VANILLA_AND_MODS.invoker().insert(type, copy.subList(0, optionalInt.getAsInt()));
+			ARRP_LOGGER.info("ARRP register - between mods and user");
+			int finalCopyLength = copy.size();
+			SidedRRPCallback.BETWEEN_MODS_AND_USER.invoker().insert(type, copy.subList(0, optionalInt.getAsInt()+1+(finalCopyLength-initialCopyLength)));
 		}
 		
 		ARRP_LOGGER.info("ARRP register - after vanilla");

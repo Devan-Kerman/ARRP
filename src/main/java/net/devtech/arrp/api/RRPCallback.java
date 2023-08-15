@@ -29,6 +29,12 @@ public interface RRPCallback {
 	Event<RRPCallback> BETWEEN_VANILLA_AND_MODS = EventFactory.createArrayBacked(RRPCallback.class, CALLBACK_FUNCTION);
 
 	/**
+	 * Register your resource pack between mod resources and user resources. This is similar to the BEFORE_USER event,
+	 * but is always enabled and not visible in the resource pack selection screen.
+	 */
+	Event<RRPCallback> BETWEEN_MODS_AND_USER = EventFactory.createArrayBacked(RRPCallback.class, CALLBACK_FUNCTION);
+
+	/**
 	 * Register your resource pack at a higher priority than minecraft and mod resources, but lower priority than user resources.
 	 */
 	Event<RRPCallback> BEFORE_USER = EventFactory.createArrayBacked(RRPCallback.class, CALLBACK_FUNCTION);
