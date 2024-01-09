@@ -303,7 +303,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 			for(Map.Entry<List<String>, Supplier<byte[]>> e : this.root.entrySet()) {
 				String pathStr = String.join("/", e.getKey());
 				Path path = output.resolve(pathStr);
-				if(path.startsWith(output)) {
+				if(path.toAbsolutePath().startsWith(output.toAbsolutePath())) {
 					Files.createDirectories(path.getParent());
 					Files.write(path, e.getValue().get());
 				} else {
@@ -554,7 +554,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 			String namespace = identifier.getNamespace();
 			String path = identifier.getPath();
 			Path file = dir.resolve(namespace).resolve(path);
-			if(file.startsWith(dir)) {
+			if(file.toAbsolutePath().startsWith(dir.toAbsolutePath())) {
 				Files.createDirectories(file.getParent());
 				try(OutputStream output = Files.newOutputStream(file)) {
 					output.write(data);

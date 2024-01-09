@@ -16,6 +16,7 @@ import static net.devtech.arrp.json.models.JModel.textures;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
 import net.devtech.arrp.json.blockstate.JMultipart;
 import net.devtech.arrp.json.blockstate.JState;
@@ -27,9 +28,14 @@ import net.devtech.arrp.json.models.JTextures;
 
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
+import java.nio.file.Path;
 
 public class RRPPreTest {
 	public static void main(String[] args) {
+		RuntimeResourcePack pack = RuntimeResourcePack.create("test:test");
+		pack.addLang(new Identifier("aaaa:aaaa"), new JLang().entry("aaaa", "bbbbb"));
+		pack.dumpDirect(Path.of("aaaa"));
+
 		JState iron_block = state(variant(JState.model("block/iron_block")));
 		JState oak_fence = state(multipart(JState.model("block/oak_fence_post")),
 				multipart(JState.model("block/oak_fence_side").uvlock()).when(when().add("north", "true")),
@@ -46,6 +52,8 @@ public class RRPPreTest {
 		                                                      .south(face("all").uv(9, 0, 11, 16))
 		                                                      .west(face("all").uv(9, 0, 11, 16))
 		                                                      .east(face("all").uv(9, 0, 11, 16))));
+
+
 
 		Gson gson = new GsonBuilder().registerTypeAdapter(JMultipart.class, new JMultipart.Serializer())
 		                             .registerTypeAdapter(JWhen.class, new JWhen.Serializer())
