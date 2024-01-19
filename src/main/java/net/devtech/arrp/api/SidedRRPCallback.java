@@ -8,7 +8,6 @@ import net.devtech.arrp.util.IrremovableList;
 import net.minecraft.resource.LifecycledResourceManagerImpl;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
-import net.minecraft.util.Util;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
@@ -57,12 +56,4 @@ public interface SidedRRPCallback {
 	 * @see LifecycledResourceManagerImpl#LifecycledResourceManagerImpl(ResourceType, List)
 	 */
 	void insert(ResourceType type, List<ResourcePack> resources);
-
-	static Void INIT_ = Util.make(() -> {
-		BEFORE_VANILLA.register((type, resources) -> RRPCallback.BEFORE_VANILLA.invoker().insert(resources));
-		BETWEEN_VANILLA_AND_MODS.register((type, resources) -> RRPCallback.BETWEEN_VANILLA_AND_MODS.invoker().insert(resources));
-		BETWEEN_MODS_AND_USER.register((type, resources) -> RRPCallback.BETWEEN_MODS_AND_USER.invoker().insert(resources));
-		AFTER_VANILLA.register((type, resources) -> RRPCallback.AFTER_VANILLA.invoker().insert(resources));
-		return null;
-	});
 }
