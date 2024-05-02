@@ -3,6 +3,9 @@ package net.devtech.arrp.mixin;
 import net.devtech.arrp.ARRP;
 import net.devtech.arrp.api.RRPCallback;
 import net.minecraft.resource.*;
+import net.minecraft.resource.ResourcePackProfile.InsertionPosition;
+import net.minecraft.resource.ResourcePackProfile.Metadata;
+import net.minecraft.resource.ResourcePackProfile.PackFactory;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import org.apache.logging.log4j.LogManager;
@@ -22,7 +25,6 @@ import java.util.function.UnaryOperator;
 @Mixin(FileResourcePackProvider.class)
 public class FileResourcePackProviderMixin {
 	@Shadow @Final private ResourceType type;
-	private static final ResourcePackSource RUNTIME = ResourcePackSource.create(getSourceTextSupplier(), true);
 	private static final Logger ARRP_LOGGER = LogManager.getLogger("ARRP/FileResourcePackProviderMixin");
 
 	private static UnaryOperator<Text> getSourceTextSupplier() {
@@ -42,13 +44,20 @@ public class FileResourcePackProviderMixin {
 
 		for (ResourcePack pack : list) {
 			adder.accept(ResourcePackProfile.create(
-				pack.getName(),
-				Text.literal(pack.getName()),
-				false,
-				(name) -> pack,
-				this.type,
-				ResourcePackProfile.InsertionPosition.TOP,
-				RUNTIME
+					pack.getInfo(),
+					new PackFactory() {
+						@Override
+						public ResourcePack openWithOverlays(ResourcePackInfo var1, Metadata var2) {
+							return pack;
+						}
+
+						@Override
+						public ResourcePack open(ResourcePackInfo var1) {
+							return pack;
+						}
+					},
+					this.type,
+					new ResourcePackPosition(true, InsertionPosition.TOP, false)
 			));
 		}
 	}

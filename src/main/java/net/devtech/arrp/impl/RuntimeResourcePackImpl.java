@@ -25,8 +25,11 @@ import net.devtech.arrp.util.UnsafeByteArrayOutputStream;
 import net.minecraft.resource.AbstractFileResourcePack;
 import net.minecraft.resource.InputSupplier;
 import net.minecraft.resource.ResourcePack;
+import net.minecraft.resource.ResourcePackInfo;
+import net.minecraft.resource.ResourcePackSource;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.ApiStatus;
@@ -392,12 +395,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 			}
 		}
 	}
-	
-	@Override
-	public Identifier getId() {
-		return this.id;
-	}
-	
+
 	/**
 	 * pack.png and that's about it I think/hope
 	 *
@@ -485,12 +483,22 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 			return null;
 		}
 	}
-	
+
 	@Override
-	public String getName() {
-		return "Runtime Resource Pack" + this.id;
+	public ResourcePackInfo getInfo() {
+		return new ResourcePackInfo("Runtime Resource Pack" + this.id, Text.of(this.id), new ResourcePackSource() {
+			@Override
+			public Text decorate(Text var1) {
+				return var1;
+			}
+
+			@Override
+			public boolean canBeEnabledLater() {
+				return false;
+			}
+		}, Optional.empty());
 	}
-	
+
 	@Override
 	public void close() {
 		LOGGER.info("closing rrp " + this.id);
