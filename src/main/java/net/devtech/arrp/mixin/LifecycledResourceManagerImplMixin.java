@@ -34,7 +34,7 @@ public abstract class LifecycledResourceManagerImplMixin {
 		ARRP_LOGGER.info("ARRP register - before vanilla");
 		SidedRRPCallback.BEFORE_VANILLA.invoker().insert(type, Lists.reverse(copy));
 
-		OptionalInt optionalInt = IntStream.range(0, copy.size()).filter(i -> copy.get(i).getName().equals("fabric")).findFirst();
+		OptionalInt optionalInt = IntStream.range(0, copy.size()).filter(i -> copy.get(i).getInfo().title().toString().equals("fabric")).findFirst();
 
 		if (optionalInt.isPresent()) {
 			ARRP_LOGGER.info("ARRP register - between vanilla and mods");

@@ -22,11 +22,10 @@ import net.devtech.arrp.json.tags.JTag;
 import net.devtech.arrp.util.CallableFunction;
 import net.devtech.arrp.util.CountingInputStream;
 import net.devtech.arrp.util.UnsafeByteArrayOutputStream;
-import net.minecraft.resource.AbstractFileResourcePack;
-import net.minecraft.resource.InputSupplier;
-import net.minecraft.resource.ResourcePack;
-import net.minecraft.resource.ResourceType;
+import net.minecraft.resource.*;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.ApiStatus;
@@ -42,10 +41,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.IntUnaryOperator;
-import java.util.function.Supplier;
+import java.util.function.*;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -394,8 +390,8 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	}
 	
 	@Override
-	public Identifier getId() {
-		return this.id;
+	public String getId() {
+		return this.id.getNamespace() + ";" + this.id.getPath();
 	}
 	
 	/**
@@ -485,10 +481,13 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 			return null;
 		}
 	}
-	
-	@Override
-	public String getName() {
-		return "Runtime Resource Pack" + this.id;
+
+	public ResourcePackInfo getInfo() {
+		return new ResourcePackInfo(
+			this.getId(),
+			Text.of("Runtime Resource Pack" + this.id),
+			ResourcePackSource.NONE,
+			this.getKnownPackInfo());
 	}
 	
 	@Override

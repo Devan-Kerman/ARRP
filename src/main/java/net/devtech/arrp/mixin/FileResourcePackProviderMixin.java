@@ -2,9 +2,8 @@ package net.devtech.arrp.mixin;
 
 import net.devtech.arrp.ARRP;
 import net.devtech.arrp.api.RRPCallback;
+import net.devtech.arrp.api.RuntimeResourcePack;
 import net.minecraft.resource.*;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Final;
@@ -17,18 +16,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
-import java.util.function.UnaryOperator;
 
 @Mixin(FileResourcePackProvider.class)
 public class FileResourcePackProviderMixin {
 	@Shadow @Final private ResourceType type;
-	private static final ResourcePackSource RUNTIME = ResourcePackSource.create(getSourceTextSupplier(), true);
 	private static final Logger ARRP_LOGGER = LogManager.getLogger("ARRP/FileResourcePackProviderMixin");
-
-	private static UnaryOperator<Text> getSourceTextSupplier() {
-		Text text = Text.translatable("pack.source.runtime");
-		return name -> Text.translatable("pack.nameAndSource", name, text).formatted(Formatting.GRAY);
-	}
 
 	@Inject(method = "register", at = @At("HEAD"))
 	public void register(
@@ -42,13 +34,20 @@ public class FileResourcePackProviderMixin {
 
 		for (ResourcePack pack : list) {
 			adder.accept(ResourcePackProfile.create(
-				pack.getName(),
-				Text.literal(pack.getName()),
-				false,
-				(name) -> pack,
+				pack.getInfo(),
+				new ResourcePackProfile.PackFactory() {
+					@Override
+					public ResourcePack open(ResourcePackInfo info) {
+						return RuntimeResourcePack.create(info.id());
+					}
+
+					@Override
+					public ResourcePack openWithOverlays(ResourcePackInfo info, ResourcePackProfile.Metadata metadata) {
+						return RuntimeResourcePack.create(info.id());
+					}
+				},
 				this.type,
-				ResourcePackProfile.InsertionPosition.TOP,
-				RUNTIME
+				new ResourcePackPosition(false, ResourcePackProfile.InsertionPosition.TOP, false)
 			));
 		}
 	}
