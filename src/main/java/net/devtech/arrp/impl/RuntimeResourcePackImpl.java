@@ -22,6 +22,7 @@ import net.devtech.arrp.json.tags.JTag;
 import net.devtech.arrp.util.CallableFunction;
 import net.devtech.arrp.util.CountingInputStream;
 import net.devtech.arrp.util.UnsafeByteArrayOutputStream;
+import net.minecraft.registry.VersionedIdentifier;
 import net.minecraft.resource.*;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
 import net.minecraft.text.Text;
@@ -487,7 +488,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 			this.getId(),
 			Text.of("Runtime Resource Pack" + this.id),
 			ResourcePackSource.NONE,
-			this.getKnownPackInfo());
+			Optional.of(VersionedIdentifier.createVanilla(this.id.getPath())));
 	}
 	
 	@Override
