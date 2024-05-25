@@ -129,6 +129,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
 	public final int packVersion;
 	private final Identifier id;
+	private final ResourcePackInfo info;
 	private final Lock waiting = new ReentrantLock();
 	private final Map<Identifier, Supplier<byte[]>> data = new ConcurrentHashMap<>();
 	private final Map<Identifier, Supplier<byte[]>> assets = new ConcurrentHashMap<>();
@@ -142,6 +143,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 	public RuntimeResourcePackImpl(Identifier id, int version) {
 		this.packVersion = version;
 		this.id = id;
+		this.info = new ResourcePackInfo(this.id.getNamespace() + ";" + this.id.getPath(), Text.of("Runtime Resource Pack " + this.id), ResourcePackSource.NONE, Optional.empty());
 	}
 	
 	@Override
@@ -486,17 +488,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
 	@Override
 	public ResourcePackInfo getInfo() {
-		return new ResourcePackInfo("Runtime Resource Pack" + this.id, Text.of(this.id), new ResourcePackSource() {
-			@Override
-			public Text decorate(Text var1) {
-				return var1;
-			}
-
-			@Override
-			public boolean canBeEnabledLater() {
-				return false;
-			}
-		}, Optional.empty());
+		return info;
 	}
 
 	@Override
