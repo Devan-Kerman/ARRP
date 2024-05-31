@@ -8,16 +8,12 @@ import java.util.stream.IntStream;
 
 import com.google.common.collect.Lists;
 import net.devtech.arrp.ARRP;
-import net.devtech.arrp.api.RRPCallback;
 import net.devtech.arrp.api.SidedRRPCallback;
-import net.devtech.arrp.util.IrremovableList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.resource.LifecycledResourceManagerImpl;
 import net.minecraft.resource.ResourcePack;
@@ -34,7 +30,7 @@ public abstract class LifecycledResourceManagerImplMixin {
 		ARRP_LOGGER.info("ARRP register - before vanilla");
 		SidedRRPCallback.BEFORE_VANILLA.invoker().insert(type, Lists.reverse(copy));
 
-		OptionalInt optionalInt = IntStream.range(0, copy.size()).filter(i -> copy.get(i).getName().equals("fabric")).findFirst();
+		OptionalInt optionalInt = IntStream.range(0, copy.size()).filter(i -> copy.get(i).getInfo().id().equals("fabric")).findFirst();
 
 		if (optionalInt.isPresent()) {
 			ARRP_LOGGER.info("ARRP register - between vanilla and mods");

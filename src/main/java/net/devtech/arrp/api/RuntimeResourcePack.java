@@ -227,8 +227,8 @@ public interface RuntimeResourcePack extends ResourcePack {
 	 * forcefully dump all assets and data into `namespace;path/`, useful for debugging
 	 */
 	default void dump(Path path) {
-		Identifier id = this.getId();
-		Path folder = path.resolve(id.getNamespace() + ';' + id.getPath());
+		String id = this.getInfo().id();
+		Path folder = path.resolve(id);
 		this.dumpDirect(folder);
 	}
 
@@ -241,6 +241,4 @@ public interface RuntimeResourcePack extends ResourcePack {
 	 * @see ByteBufInputStream
 	 */
 	void load(ZipInputStream stream) throws IOException;
-
-	Identifier getId();
 }
